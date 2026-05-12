@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Portal - BMI Taekwondo Academy</title>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <style>
+        /* =========================================
+   BMI TAEKWONDO ACADEMY
+   ULTRA PREMIUM UI
+========================================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+:root{
+
+--bg1:#071029;
+--bg2:#0f172a;
+--bg3:#172554;
+
+--glass:rgba(255,255,255,.08);
+--border:rgba(255,255,255,.10);
+
+--blue:#60a5fa;
+--blue2:#2563eb;
+
+--green:#22c55e;
+--red:#ef4444;
+--yellow:#f59e0b;
+
+--text:#ffffff;
+--soft:#cbd5e1;
+
+}
+
+/* =========================================
+   BODY
+========================================= */
+
+body{
+
+font-family:'Segoe UI',sans-serif;
+
+background:
+radial-gradient(circle at top left,#2563eb 0%,#0f172a 45%,#020617 100%);
+
+color:var(--text);
+
+min-height:100vh;
+
+padding:20px;
+
+overflow-x:hidden;
+
+}
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+::-webkit-scrollbar{
+width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+background:#2563eb;
+border-radius:20px;
+}
+
+/* =========================================
+   MAIN CONTAINER
+========================================= */
+
+.container{
+
+width:100%;
+max-width:850px;
+
+margin:auto;
+
+}
+
+/* =========================================
+   HEADER PREMIUM
+========================================= */
+
+.topbar{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:20px;
+
+padding:22px;
+
+margin-bottom:25px;
+
+/* Background Header */
+background:
+linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
+url('https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/Header.png');
+
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+
+backdrop-filter:blur(8px);
+
+border:1px solid rgba(255,255,255,.12);
+
+border-radius:28px;
+
+box-shadow:
+0 10px 40px rgba(0,0,0,.45);
+
+position:relative;
+overflow:hidden;
+
+}
+
+.brand-area{
+
+display:flex;
+align-items:center;
+gap:18px;
+
+}
+
+.logo{
+
+width:clamp(80px,15vw,130px);
+height:clamp(80px,15vw,130px);
+
+padding:-4px;
+
+background:
+rgba(255,255,255,.05);
+
+object-fit:contain;
+
+border-radius:22px;
+
+box-shadow:
+0 0 25px rgba(96,165,250,.35),
+0 10px 30px rgba(0,0,0,.25);
+
+transition:.3s;
+
+}
+
+.logo:hover{
+
+transform:scale(1.05) rotate(2deg);
+
+}
+
+.brand-title{
+
+font-size:38px;
+font-weight:900;
+
+line-height:1;
+
+letter-spacing:1px;
+
+}
+
+.brand-sub{
+
+margin-top:8px;
+
+font-size:14px;
+
+opacity:.75;
+
+line-height:1.5;
+
+}
+
+.live-box{
+
+display:flex;
+align-items:center;
+gap:10px;
+
+background:#020617;
+
+padding:14px 18px;
+
+border-radius:18px;
+
+font-weight:800;
+
+font-size:15px;
+
+box-shadow:
+0 0 20px rgba(0,0,0,.35);
+
+}
+
+.dot{
+
+width:12px;
+height:12px;
+
+border-radius:50%;
+
+background:var(--green);
+
+box-shadow:
+0 0 15px var(--green);
+
+animation:pulse 1.5s infinite;
+
+}
+
+@keyframes pulse{
+
+0%{
+transform:scale(1);
+opacity:1;
+}
+
+50%{
+transform:scale(1.3);
+opacity:.7;
+}
+
+100%{
+transform:scale(1);
+opacity:1;
+}
+
+}
+
+/* =========================================
+   LOGIN BOX
+========================================= */
+
+.login-box,
+.profile-box{
+
+background:var(--glass);
+
+backdrop-filter:blur(18px);
+
+border:1px solid var(--border);
+
+border-radius:32px;
+
+padding:30px;
+
+box-shadow:
+0 20px 50px rgba(0,0,0,.35);
+
+margin-bottom:25px;
+
+}
+
+.active{
+display:block;
+}
+
+.login-box,
+.profile-box{
+display:none;
+}
+
+.active{
+display:block;
+}
+
+/* =========================================
+   TITLE
+========================================= */
+
+h1{
+
+font-size:42px;
+
+font-weight:900;
+
+text-align:center;
+
+margin-bottom:8px;
+
+line-height:1.1;
+
+}
+
+.subtitle{
+
+text-align:center;
+
+font-size:15px;
+
+opacity:.75;
+
+margin-bottom:25px;
+
+}
+
+/* =========================================
+   INPUT
+========================================= */
+
+input{
+
+width:100%;
+
+padding:16px;
+
+margin-bottom:16px;
+
+border:none;
+
+outline:none;
+
+border-radius:18px;
+
+background:
+rgba(255,255,255,.08);
+
+color:white;
+
+font-size:15px;
+
+border:1px solid rgba(255,255,255,.08);
+
+transition:.3s;
+
+}
+
+input:focus{
+
+border-color:#60a5fa;
+
+box-shadow:
+0 0 0 4px rgba(96,165,250,.15);
+
+}
+
+/* =========================================
+   BUTTON
+========================================= */
+
+.btn{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+border-radius:18px;
+
+font-size:15px;
+
+font-weight:800;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.btn:hover{
+
+transform:translateY(-2px);
+
+}
+
+.btn-login{
+
+background:
+linear-gradient(135deg,#2563eb,#60a5fa);
+
+color:white;
+
+box-shadow:
+0 10px 25px rgba(37,99,235,.35);
+
+}
+
+/* =========================================
+   ALERT
+========================================= */
+
+.notif-alert{
+
+background:
+linear-gradient(135deg,#f59e0b,#fbbf24);
+
+color:#111;
+
+padding:16px;
+
+border-radius:18px;
+
+font-size:14px;
+
+font-weight:800;
+
+margin-bottom:25px;
+
+text-align:center;
+
+box-shadow:
+0 10px 25px rgba(245,158,11,.25);
+
+}
+/* Animasi Peringatan Menyala & Berkedip */
+@keyframes peringatanGlow {
+    0% { 
+        box-shadow: 0 0 5px #ef4444; 
+        background-color: rgba(239, 68, 68, 0.8);
+    }
+    50% { 
+        box-shadow: 0 0 30px #ef4444, 0 0 50px #ff0000; 
+        background-color: #ff0000;
+        transform: scale(1.02); /* Sedikit membesar saat menyala */
+    }
+    100% { 
+        box-shadow: 0 0 5px #ef4444; 
+        background-color: rgba(239, 68, 68, 0.8);
+    }
+}
+
+.alert-danger-active {
+    animation: peringatanGlow 1.5s infinite ease-in-out;
+    border: 2px solid #fff !important;
+    color: #fff !important;
+    font-weight: bold;
+}
+
+
+/* =========================================
+   CARD
+========================================= */
+
+.info-card{
+
+background:
+linear-gradient(
+rgba(0,0,0,.65),
+rgba(0,0,0,.65)
+),
+url('https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2017.16.40.png');
+
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+
+backdrop-filter: blur(8px);
+
+padding:25px;
+
+border-radius:28px;
+
+border:1px solid rgba(255,255,255,.08);
+
+box-shadow:
+0 15px 35px rgba(0,0,0,.25);
+
+margin-bottom:20px;
+
+transition:.3s;
+
+overflow:hidden;
+
+position:relative;
+
+}
+
+.info-card:hover{
+
+transform:translateY(-3px);
+
+}
+.day-card{
+
+background:
+rgba(255,255,255,.04);
+
+border:
+1px solid rgba(255,255,255,.06);
+
+border-radius:22px;
+
+padding:18px;
+
+margin-bottom:16px;
+
+}
+
+.day-title{
+font-size:15px;
+font-weight:800;
+margin-bottom:12px;
+color:#60a5fa;
+text-transform:capitalize;
+letter-spacing:1px;
+}
+
+.session-row{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:12px 0;
+
+border-bottom:
+1px solid rgba(255,255,255,.05);
+
+gap:10px;
+
+}
+
+.session-left{
+
+display:flex;
+
+align-items:center;
+
+gap:14px;
+
+}
+
+.session-type{
+font-size:9px;
+color:#60a5fa;
+font-weight:700;
+margin-bottom:1px;
+letter-spacing:1px;
+opacity:.8;
+}
+
+.session-jam{
+font-size:16px;
+font-weight:700;
+color:white;
+line-height:1.2;
+}
+
+.session-badge{
+
+padding:8px 14px;
+
+border-radius:999px;
+
+font-size:11px;
+
+font-weight:900;
+
+color:white;
+
+}
+
+.empty-day{
+
+opacity:.5;
+
+font-weight:700;
+
+}
+
+/* =========================================
+   ROW DATA
+========================================= */
+
+.info-row{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:14px 0;
+
+border-bottom:
+1px solid rgba(255,255,255,.06);
+
+gap:15px;
+
+}
+
+.label{
+
+font-size:14px;
+
+opacity:.7;
+
+}
+
+.val{
+
+font-size:17px;
+
+font-weight:800;
+
+text-align:right;
+
+}
+
+/* =========================================
+   BADGE
+========================================= */
+
+.badge{
+
+padding:8px 16px;
+
+border-radius:999px;
+
+font-size:13px;
+
+font-weight:900;
+
+}
+
+.lunas{
+
+background:#16a34a;
+
+box-shadow:
+0 0 20px rgba(22,163,74,.35);
+
+}
+
+.belum{
+
+background:#dc2626;
+
+box-shadow:
+0 0 20px rgba(220,38,38,.35);
+
+}
+
+/* =========================================
+   WHATSAPP LINK
+========================================= */
+
+.wa-link{
+
+color:#4ade80;
+
+font-weight:900;
+
+text-decoration:none;
+
+}
+
+/* =========================================
+   JADWAL
+========================================= */
+/* =========================================
+   PERBAIKAN TAMPILAN JADWAL (PREMIUM)
+========================================= */
+#modalJadwal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px); /* Efek blur latar belakang */
+}
+
+.modal-content-jadwal {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    margin: 5% auto;
+    padding: 25px;
+    border: 1px solid rgba(255,255,255,0.2);
+    width: 98%;
+    max-width: 800px;
+    border-radius: 30px;
+    max-height: 80vh;
+    overflow-y: auto; /* Agar bisa di-scroll jika jadwal panjang */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.day-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.day-title {
+    color: var(--blue);
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    border-bottom: 2px solid var(--blue2);
+    display: inline-block;
+}
+
+.session-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px 20px;
+    border-radius: 15px;
+    margin-bottom: 8px;
+    transition: 0.3s;
+}
+
+.session-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.session-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.session-jam {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.session-type {
+    font-size: 0.8rem;
+    color: var(--soft);
+    text-transform: uppercase;
+}
+
+.session-badge {
+    background: var(--green);
+    color: white;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-weight: bold;
+}
+
+
+.modal-jadwal-content {
+    background: linear-gradient(145deg, #0f172a, #020617);
+    max-width: 600px; 
+    margin: 40px auto; 
+    padding: 30px; 
+    border-radius: 32px; 
+    max-height: 85vh; 
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    position: relative;
+}
+
+/* Tombol Tutup */
+.close-jadwal {
+    position: sticky;
+    top: 0;
+    float: right;
+    font-size: 30px;
+    color: #fff;
+    cursor: pointer;
+    z-index: 10;
+    line-height: 1;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tombol Pemicu */
+.btn-show-jadwal {
+    background: linear-gradient(135deg, #2563eb, #60a5fa);
+    color: white;
+    padding: 16px;
+    border-radius: 18px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    margin-top: 15px;
+    box-shadow: 0 10px 20px rgba(37,99,235,0.3);
+}
+/* =========================================
+   CLEAN SCHEDULE DESIGN
+========================================= */
+
+.schedule-box{
+margin-top:20px;
+}
+
+.schedule-title{
+font-size:20px;
+font-weight:900;
+margin-bottom:14px;
+color:white;
+}
+
+.btn-show-jadwal{
+background:linear-gradient(135deg,#2563eb,#60a5fa);
+color:white;
+padding:14px;
+border:none;
+border-radius:16px;
+font-weight:800;
+font-size:14px;
+cursor:pointer;
+width:100%;
+}
+
+.modal-jadwal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.92);
+z-index:9999;
+padding:15px;
+overflow-y:auto;
+}
+
+.modal-jadwal-content{
+background:#0f172a;
+max-width:500px;
+margin:30px auto;
+padding:20px;
+border-radius:24px;
+border:1px solid rgba(255,255,255,.08);
+}
+
+.close-jadwal{
+float:right;
+font-size:28px;
+cursor:pointer;
+color:white;
+margin-bottom:10px;
+}
+
+.day-card{
+background:#111827;
+border-radius:20px;
+padding:16px;
+margin-bottom:14px;
+border:1px solid rgba(255,255,255,.05);
+}
+
+.day-title{
+font-size:18px;
+font-weight:900;
+margin-bottom:14px;
+color:#60a5fa;
+text-transform:uppercase;
+}
+
+.session-row{
+display:flex;
+align-items:center;
+padding:10px 12px;
+border-radius:14px;
+background:rgba(255,255,255,.03);
+margin-bottom:8px;
+}
+
+.session-left{
+display:flex;
+align-items:center;
+gap:14px;
+}
+
+
+.session-type{
+font-size:11px;
+color:#60a5fa;
+font-weight:800;
+margin-bottom:2px;
+letter-spacing:1px;
+}
+
+.session-jam{
+font-size:20px;
+font-weight:900;
+color:white;
+}
+
+.empty-day{
+opacity:.5;
+font-size:13px;
+padding:10px 0;
+}
+
+.today-card{
+border:1px solid #3b82f6;
+box-shadow:0 0 18px rgba(59,130,246,.25);
+}
+/* =========================================
+   HISTORY
+========================================= */
+
+.history-title{
+
+font-size:22px;
+
+font-weight:900;
+
+margin-top:25px;
+
+margin-bottom:18px;
+
+}
+
+.hist-item{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:16px;
+
+margin-bottom:12px;
+
+background:
+rgba(255,255,255,.05);
+
+border-radius:18px;
+
+border:
+1px solid rgba(255,255,255,.05);
+
+font-size:14px;
+
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.footer-pro{
+
+margin-top:30px;
+
+text-align:center;
+
+padding:25px;
+
+opacity:.7;
+
+}
+
+.footer-title{
+
+font-size:22px;
+
+font-weight:900;
+
+margin-bottom:8px;
+
+}
+
+.footer-sub{
+
+font-size:14px;
+
+margin-bottom:6px;
+
+}
+
+.footer-copy{
+
+font-size:12px;
+
+opacity:.7;
+
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:768px){
+
+body{
+padding:14px;
+}
+
+.topbar{
+
+flex-direction:column;
+align-items:flex-start;
+
+}
+
+.brand-title{
+
+font-size:28px;
+
+}
+
+.logo{
+
+width:60px;
+height:60px;
+
+}
+
+.live-box{
+
+align-self:flex-end;
+
+}
+
+.login-box,
+.profile-box{
+
+padding:22px;
+
+border-radius:26px;
+
+}
+
+h1{
+
+font-size:34px;
+
+}
+
+.info-row{
+
+flex-direction:column;
+align-items:flex-start;
+
+}
+
+.val{
+
+text-align:left;
+
+}
+
+#jadwal{
+
+font-size:16px;
+
+line-height:1.8;
+
+}
+
+}
+
+.footer-title{
+font-size:18px;
+font-weight:900;
+margin-bottom:6px;
+}
+
+.footer-sub{
+margin-bottom:6px;
+}
+.session-icon i {
+    font-size: 28px;
+    /* Efek pendaran cahaya (Glow) */
+    filter: drop-shadow(0 0 10px currentColor);
+    transition: 0.3s;
+}
+
+.session-row:hover .session-icon i {
+    transform: scale(1.2) rotate(-5deg);
+    filter: drop-shadow(0 0 20px currentColor);
+}
+
+
+    </style>
+</head>
+<body>
+<div class="topbar">
+
+<div class="brand-area">
+<img src="https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2016.20.14..png" class="logo">
+
+<div>
+<div class="brand-title">
+BMI TAEKWONDO ACADEMY
+</div>
+
+<div class="brand-sub">
+Member Portal • Martial Arts Academy
+</div>
+</div>
+</div>
+
+<div class="live-box">
+<div class="dot"></div>
+ONLINE
+</div>
+
+</div>
+<div class="container">
+    <div id="loginSection" class="login-box active">
+        <h1>Member Login</h1>
+        <p class="subtitle">BMI Taekwondo Academy</p>
+        <input type="text" id="userInp" placeholder="Username">
+        <input type="password" id="passInp" placeholder="Password">
+        <button class="btn btn-login" onclick="login()">Masuk ke Dashboard</button>
+    </div>
+
+    <div id="profileSection" class="profile-box">
+        <h1 id="welcomeName" style="color: #fff;">Halo!</h1>
+        <p class="subtitle" id="memberUser">@username</p>
+
+        <div id="alertBox" style="display:none;" class="notif-alert">
+            ⚠️ Perhatian: Anda memiliki tunggakan kewajiban!
+        </div>
+
+        <div class="info-card">
+            <div class="info-row"><span class="label">Status kewajiban</span><span id="statusTag"></span></div>
+            <div class="info-row"><span class="label">Warna Sabuk</span><span class="val" id="valSabuk">-</span></div>
+            <div class="info-row"><span class="label">Tgl Lahir</span><span class="val" id="valTgl">-</span></div>
+            <div class="info-row"><span class="label">WhatsApp</span><span class="val" id="valWA">-</span></div>
+            <div class="info-row"><span class="label">Fisik (Berat/Tinggi)</span><span class="val" id="valFisik">-</span></div>
+             <div class="info">
+<div class="schedule-box">
+<div class="schedule-title">📅 Jadwal Latihan</div>
+
+<button class="btn-show-jadwal" onclick="toggleJadwal(true)">
+    <i class="fa-solid fa-calendar-days"></i> JADWAL LATIHAN
+</button>
+
+<div id="modalJadwal" class="modal-jadwal">
+    <div class="modal-jadwal-content">
+        <span class="close-jadwal" onclick="toggleJadwal(false)">&times;</span>
+        <h2 style="margin-bottom: 25px; color: #60a5fa; font-weight: 900;">
+            <i class="fa-solid fa-calendar-check"></i> Master Schedule
+        </h2>
+        <div id="jadwal"></div> </div>
+</div>
+
+</div>
+</div>
+        </div>
+
+        <div class="history-title">Riwayat Pembayaran</div>
+        <div id="historyContainer"></div>
+
+        <button class="btn" style="background:#475569; color:white; margin-top:20px;" onclick="logout()">Keluar</button>
+    </div>
+</div>
+<div class="footer-pro">
+
+<div class="footer-title">
+BMI TAEKWONDO ACADEMY
+</div>
+
+<div class="footer-sub">
+Discipline • Honor • Excellence
+</div>
+
+<div class="footer-copy">
+© 2026 All Rights Reserved
+</div>
+
+</div>
+<script>
+// --- KONFIGURASI FIREBASE ---
+const firebaseConfig = {
+    apiKey: "AIzaSyATIQKEoacfqd_P5mBn915gzwbsLQE-va8",
+    authDomain: "spp-unisri-taekwondo.firebaseapp.com",
+    projectId: "spp-unisri-taekwondo",
+    storageBucket: "spp-unisri-taekwondo.firebasestorage.app",
+    messagingSenderId: "888126318699",
+    appId: "1:888126318699:web:6e1ef3d5a49908c2b5692e"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// --- FUNGSI LOGIN ---
+function login() {
+    const u = document.getElementById("userInp").value;
+    const p = document.getElementById("passInp").value;
+
+    if(!u || !p) return alert("Isi username & password!");
+
+    db.collection("siswa")
+      .where("username", "==", u)
+      .where("password", "==", p)
+      .get()
+      .then(snapshot => {
+          if(snapshot.empty) {
+              alert("Username atau Password salah!");
+          } else {
+              const dataSiswa = snapshot.docs[0].data();
+              // Simpan data login ke memori HP
+              localStorage.setItem("bmi_member_login", JSON.stringify({username: dataSiswa.username}));
+              
+              // Sembunyikan kotak login, tampilkan profil
+              document.getElementById("loginSection").classList.remove("active");
+              document.getElementById("profileSection").classList.add("active");
+              tampilkanProfil(dataSiswa);
+          }
+      })
+      .catch(err => alert("Terjadi kesalahan koneksi: " + err));
+}
+
+// --- FUNGSI TAMPILKAN PROFIL ---
+function tampilkanProfil(data) {
+    // 1. Tampilkan Data Dasar
+    document.getElementById("welcomeName").innerText = "Halo, " + (data.nama || "Member") + "!";
+    document.getElementById("memberUser").innerText = "@" + (data.username || "user");
+    document.getElementById("valSabuk").innerText = data.warna_sabuk || "-";
+    document.getElementById("valFisik").innerText = (data.berat_badan || 0) + "kg / " + (data.tinggi_badan || 0) + "cm";
+    
+    // Format Tanggal Lahir
+    if(data.tanggal_lahir) {
+        const p = data.tanggal_lahir.split("-");
+        const bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+        document.getElementById("valTgl").innerText = `${p[2]} ${bulan[parseInt(p[1])-1]} ${p[0]}`;
+    }
+
+    // Nomor WhatsApp
+    if (data.nomor_hp) {
+        document.getElementById("valWA").innerHTML = `<a href="https://wa.me/${data.nomor_hp}" target="_blank" class="wa-link">${data.nomor_hp}</a>`;
+    }
+
+    // 2. Status Pembayaran
+    const bulanSekarang = new Date().toISOString().slice(0, 7);
+    const tag = document.getElementById("statusTag");
+    if(data.bulan_bayar === bulanSekarang) {
+        tag.innerHTML = '<span class="badge lunas">LUNAS</span>';
+    } else {
+        tag.innerHTML = '<span class="badge belum">BELUM BAYAR</span>';
+    }
+
+    // 3. Logika Peringatan (Kedip jika tanggal 10+)
+    const alertBox = document.getElementById("alertBox");
+    const hariIni = new Date().getDate();
+
+    if (data.peringatan === true) {
+        alertBox.style.display = "block";
+        if (hariIni >= 10 && data.bulan_bayar !== bulanSekarang) {
+            alertBox.classList.add("alert-danger-active");
+            alertBox.innerHTML = `⚠️ <strong>PERINGATAN KERAS:</strong> Sudah tanggal ${hariIni}, harap segera lunasi kewajiban anda!`;
+        } else {
+            alertBox.classList.remove("alert-danger-active");
+            alertBox.innerHTML = `⚠️ <strong>Perhatian:</strong> Harap segera melunasi kewajiban bulan ini.`;
+        }
+
+        // Lapor ke admin bahwa sudah dibaca
+        db.collection("siswa").where("username", "==", data.username).get().then(snap => {
+            snap.forEach(doc => { doc.ref.update({ peringatan_dilihat: true }); });
+        });
+    } else {
+        alertBox.style.display = "none";
+    }
+
+    // 4. Riwayat Pembayaran
+    const riwayat = data.riwayat_bayar || [];
+    let histHtml = "";
+    if(riwayat.length === 0) {
+        histHtml = "<p style='font-size:12px; opacity:0.5;'>Belum ada data pembayaran.</p>";
+    } else {
+        riwayat.sort().reverse().forEach(tgl => {
+            histHtml += `<div class="hist-item"><span>Bulan: ${tgl}</span> <span style="font-weight:bold; color:#4ade80;">✅ Sukses</span></div>`;
+        });
+    }
+    document.getElementById("historyContainer").innerHTML = histHtml;
+}
+
+// --- JADWAL SYSTEM ---
+db.collection("jadwal").doc("global").onSnapshot(doc => {
+    if(!doc.exists) return;
+    const j = doc.data();
+    const hariList = ["senin","selasa","rabu","kamis","jumat","sabtu","minggu"];
+    let html = "";
+
+    hariList.forEach(hari => {
+        const sessions = j[hari] || [];
+        if (sessions.length > 0) {
+            let items = "";
+            sessions.forEach(s => {
+                items += `
+                <div class="session-card">
+                    <div class="session-info">
+                        <div class="session-type">${s.type}</div>
+                        <div class="session-jam">${s.jam} WIB</div>
+                    </div>
+                    <div class="session-badge">AKTIF</div>
+                </div>`;
+            });
+            html += `<div class="day-card"><div class="day-title">${hari}</div>${items}</div>`;
+        }
+    });
+    document.getElementById("jadwal").innerHTML = html || "<p>Belum ada jadwal.</p>";
+});
+
+// --- SESSION CONTROL (AUTO LOGIN) ---
+window.onload = function(){
+    const savedLogin = localStorage.getItem("bmi_member_login");
+    if(savedLogin){
+        const localData = JSON.parse(savedLogin);
+        db.collection("siswa").where("username", "==", localData.username).onSnapshot(snapshot => {
+            if(!snapshot.empty){
+                document.getElementById("loginSection").classList.remove("active");
+                document.getElementById("profileSection").classList.add("active");
+                tampilkanProfil(snapshot.docs[0].data());
+            }
+        });
+    } else {
+        document.getElementById("loginSection").classList.add("active");
+    }
+}
+
+function logout(){
+    localStorage.removeItem("bmi_member_login");
+    location.reload();
+}
+
+function toggleJadwal(show) {
+    document.getElementById("modalJadwal").style.display = show ? "block" : "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById("modalJadwal")) toggleJadwal(false);
+}
+
+</script>
+</body>
+</html>
