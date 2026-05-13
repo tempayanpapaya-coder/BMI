@@ -680,6 +680,33 @@ box-shadow:
 0 10px 30px rgba(239,68,68,.28);
 
 }
+/* Animasi Berkedip & Menyala (Glowing Pulse) */
+@keyframes warningGlow {
+    0% {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        box-shadow: 0 0 5px rgba(239, 68, 68, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        background: linear-gradient(135deg, #ff5f5f, #ef4444);
+        box-shadow: 0 0 25px rgba(239, 68, 68, 0.8), 0 0 50px rgba(239, 68, 68, 0.4);
+        transform: scale(1.02); /* Sedikit membesar saat menyala */
+    }
+    100% {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        box-shadow: 0 0 5px rgba(239, 68, 68, 0.4);
+        transform: scale(1);
+    }
+}
+
+/* Class khusus untuk Peringatan Keras */
+.alert-danger-active {
+    animation: warningGlow 1.5s infinite ease-in-out;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
 
 /* =========================================================
    INFO CARD
@@ -1616,8 +1643,15 @@ function login() {
 }
 
 // --- FUNGSI TAMPILKAN PROFIL ---
+// --- FUNGSI TAMPILKAN PROFIL ---
 function tampilkanProfil(data) {
-    // 1. Tampilkan Data Dasar
+    // 1. Deklarasi Variabel Awal
+    const now = new Date();
+    const mingguKeSekarang = Math.ceil(now.getDate() / 7);
+    const mingguSekarang = getMingguKey();
+    const alertBox = document.getElementById("alertBox"); // Deklarasi cukup sekali di sini
+
+    // 2. Tampilkan Data Dasar
     document.getElementById("welcomeName").innerText = "Halo, " + (data.nama || "Member") + "!";
     document.getElementById("memberUser").innerText = "@" + (data.username || "user");
     document.getElementById("valSabuk").innerText = data.warna_sabuk || "-";
@@ -1635,127 +1669,84 @@ function tampilkanProfil(data) {
         document.getElementById("valWA").innerHTML = `<a href="https://wa.me/${data.nomor_hp}" target="_blank" class="wa-link">${data.nomor_hp}</a>`;
     }
 
-    // 2. Status Pembayaran
-    const mingguSekarang = getMingguKey();
-const tag = document.getElementById("statusTag");
+    // 3. Status Pembayaran Tag
+    const tag = document.getElementById("statusTag");
+    if(data.minggu_bayar === mingguSekarang) {
+        tag.innerHTML = '<span class="badge lunas">LUNAS MINGGU INI</span>';
+    } else {
+        tag.innerHTML = '<span class="badge belum">BELUM BAYAR KAS</span>';
+    }
 
-if(data.minggu_bayar === mingguSekarang) {
-    tag.innerHTML = '<span class="badge lunas">LUNAS MINGGU INI</span>';
-} else {
-    tag.innerHTML = '<span class="badge belum">BELUM BAYAR KAS</span>';
-}
-
-    // 3. Logika Peringatan (Kedip jika tanggal 10+)
-    const alertBox = document.getElementById("alertBox");
-    const hariIni = new Date().getDate();
-
+    // 4. Logika Peringatan (DENGAN ANIMASI)
     if (data.peringatan === true) {
         alertBox.style.display = "block";
-       if (data.minggu_bayar !== mingguSekarang) {
+        if (data.minggu_bayar !== mingguSekarang) {
             alertBox.classList.add("alert-danger-active");
-            alertBox.innerHTML = `⚠️ <strong>PERINGATAN KERAS:</strong> Saat ini sudah memasuki minggu ke ${mingguKeSekarang}, harap segera melunasi kewajiban anda!`;
+            alertBox.innerHTML = `⚠️ <strong>PERINGATAN KERAS:</strong> Segera lunasi kewajiban Anda untuk minggu ini!`;
         } else {
-          const mingguKeSekarang = Math.ceil(new Date().getDate() / 7);
             alertBox.classList.remove("alert-danger-active");
-            alertBox.innerHTML = `⚠️ <strong>Perhatian:</strong> Harap segera melunasi kewajiban minggu ini.`;
+            alertBox.innerHTML = `⚠️ <strong>Perhatian:</strong> Harap cek kembali data administrasi Anda.`;
         }
-
-        // Lapor ke admin bahwa sudah dibaca
+        // Update status di database bahwa sudah dilihat
         db.collection("siswa").where("username", "==", data.username).get().then(snap => {
             snap.forEach(doc => { doc.ref.update({ peringatan_dilihat: true }); });
         });
     } else {
         alertBox.style.display = "none";
     }
- // ========================================
-// KALENDER KAS DIGITAL
-// ========================================
 
-const kasCalendar = document.getElementById("kasCalendar");
+    // 5. Kalender Kas Digital
+    const kasCalendar = document.getElementById("kasCalendar");
+    const riwayatKas = data.riwayat_kas || [];
+    let kalenderHTML = "";
+    let totalBayar = 0;
 
-const now = new Date();
+    for(let i = 1; i <= 4; i++){
+        let lunas = false;
+        riwayatKas.forEach(r => {
+            const teks = r.toLowerCase();
+            if(
+                (i === 1 && teks.includes("pertama")) ||
+                (i === 2 && teks.includes("kedua")) ||
+                (i === 3 && teks.includes("ketiga")) ||
+                (i === 4 && teks.includes("keempat"))
+            ) { lunas = true; }
+        });
 
-const mingguKeSekarang = Math.ceil(now.getDate() / 7);
+        let kelas = lunas ? "lunas" : "belum";
+        if(i === mingguKeSekarang) kelas += " current";
+        if(lunas) totalBayar++;
 
-const riwayatKas = data.riwayat_kas || [];
-
-let kalenderHTML = "";
-
-let totalBayar = 0;
-
-for(let i = 1; i <= 4; i++){
-
-    let lunas = false;
-
-    riwayatKas.forEach(r => {
-
-        const teks = r.toLowerCase();
-
-        if(
-            (i === 1 && teks.includes("pertama")) ||
-            (i === 2 && teks.includes("kedua")) ||
-            (i === 3 && teks.includes("ketiga")) ||
-            (i === 4 && teks.includes("keempat"))
-        ){
-            lunas = true;
-        }
-
-    });
-
-    let kelas = lunas ? "lunas" : "belum";
-
-    if(i === mingguKeSekarang){
-        kelas += " current";
+        kalenderHTML += `
+        <div class="kas-week ${kelas}">
+            <div class="minggu">Minggu ${i}</div>
+            <div class="status">${lunas ? "✅" : "💸"}</div>
+            <div class="text">${lunas ? "Sudah Bayar" : "Belum Bayar"}</div>
+        </div>`;
     }
+    kasCalendar.innerHTML = kalenderHTML;
 
-    if(lunas){
-        totalBayar++;
-    }
+    // Progress Bar
+    const persen = (totalBayar / 4) * 100;
+    document.getElementById("progressKas").style.width = persen + "%";
+    document.getElementById("progressText").innerText = `${totalBayar}/4 Minggu Sudah Dibayar`;
 
-    kalenderHTML += `
-    <div class="kas-week ${kelas}">
-        <div class="minggu">
-            Minggu ${i}
-        </div>
-
-        <div class="status">
-            ${lunas ? "✅" : "💸"}
-        </div>
-
-        <div class="text">
-            ${lunas ? "Sudah Bayar" : "Belum Bayar"}
-        </div>
-    </div>
-    `;
-}
-
-// render kalender
-kasCalendar.innerHTML = kalenderHTML;
-
-// progress
-const persen = (totalBayar / 4) * 100;
-
-document.getElementById("progressKas").style.width = persen + "%";
-
-document.getElementById("progressText").innerText =
-`${totalBayar}/4 Minggu Sudah Dibayar`;
-
-    // 4. Riwayat Pembayaran
-   const riwayat = data.riwayat_kas || [];
+    // 6. Riwayat Pembayaran List
     let histHtml = "";
-    if(riwayat.length === 0) {
+    if(riwayatKas.length === 0) {
         histHtml = "<p style='font-size:12px; opacity:0.5;'>Belum ada data pembayaran.</p>";
     } else {
-        riwayat.sort().reverse().forEach(tgl => {
-          histHtml += `
-<div class="hist-item">
-    <span>${tgl}</span>
-    <span style="font-weight:bold; color:#4ade80;">✅ Kas Dibayar</span>
-</div>`;
-});
+        [...riwayatKas].sort().reverse().forEach(tgl => {
+            histHtml += `
+            <div class="hist-item">
+                <span>${tgl}</span>
+                <span style="font-weight:bold; color:#4ade80;">✅ Kas Dibayar</span>
+            </div>`;
+        });
     }
     document.getElementById("historyContainer").innerHTML = histHtml;
 }
+
 
 // --- JADWAL SYSTEM ---
 db.collection("jadwal").doc("global").onSnapshot(doc => {
