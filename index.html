@@ -10,34 +10,23 @@
 
     <style>
 :root{
-
 /* COLORS */
 --bg:#060816;
 --card:#0f172a;
 --card2:#111827;
-
 --glass:rgba(255,255,255,.06);
 --glass2:rgba(255,255,255,.03);
-
 --border:rgba(255,255,255,.08);
-
 --primary:#3b82f6;
 --primary2:#60a5fa;
-
 --success:#22c55e;
 --danger:#ef4444;
 --warning:#f59e0b;
-
 --text:#ffffff;
 --soft:#94a3b8;
-
 /* SHADOW */
---shadow:
-0 10px 30px rgba(0,0,0,.35);
-
---shadow-blue:
-0 0 30px rgba(59,130,246,.18);
-
+--shadow: 0 10px 30px rgba(0,0,0,.35);
+--shadow-blue: 0 0 30px rgba(59,130,246,.18);
 }
 
 *{
@@ -51,26 +40,12 @@ scroll-behavior:smooth;
 }
 
 body{
-
-font-family:
-Inter,
-Segoe UI,
-sans-serif;
-
-background:
-radial-gradient(circle at top,
-#172554 0%,
-#0b1120 35%,
-#020617 100%);
-
+font-family: Inter, Segoe UI, sans-serif;
+background: radial-gradient(circle at top, #172554 0%, #0b1120 35%, #020617 100%);
 color:var(--text);
-
 min-height:100vh;
-
 padding:24px;
-
 overflow-x:hidden;
-
 }
 
 ::-webkit-scrollbar{
@@ -82,243 +57,120 @@ background:#020617;
 }
 
 ::-webkit-scrollbar-thumb{
-background:linear-gradient(
-180deg,
-#3b82f6,
-#2563eb
-);
-
+background:linear-gradient(180deg, #3b82f6, #2563eb);
 border-radius:20px;
 }
 
 .container{
-
 width:100%;
 max-width:950px;
-
 margin:auto;
-
 }
 
 .topbar{
-
 position:relative;
-
 display:flex;
 justify-content:space-between;
 align-items:center;
-
 gap:20px;
-
 padding:24px 28px;
-
 margin-bottom:26px;
-
 border-radius:34px;
-
 overflow:hidden;
-
-background:
-linear-gradient(
-135deg,
-rgba(15,23,42,.88),
-rgba(2,6,23,.92)
-),
-url('https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/Header.png');
-
+background: linear-gradient(135deg, rgba(15,23,42,.88), rgba(2,6,23,.92)), url('https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/Header.png');
 background-size:cover;
 background-position:center;
-
 border:1px solid rgba(255,255,255,.08);
-
 backdrop-filter:blur(18px);
-
-box-shadow:
-0 15px 50px rgba(0,0,0,.45);
-
+box-shadow: 0 15px 50px rgba(0,0,0,.45);
 }
 
-/* glow */
 .topbar::before{
-
 content:"";
-
 position:absolute;
-
 inset:-120px;
-
-background:
-radial-gradient(circle,
-rgba(59,130,246,.25),
-transparent 60%);
-
+background: radial-gradient(circle, rgba(59,130,246,.25), transparent 60%);
 pointer-events:none;
-
 }
 
 .brand-area{
-
 display:flex;
 align-items:center;
 gap:18px;
-
 z-index:2;
-
 }
 
 .logo{
-
 width:88px;
 height:88px;
-
 padding:8px;
-
 border-radius:24px;
-
 object-fit:contain;
-
-background:
-linear-gradient(
-145deg,
-rgba(255,255,255,.12),
-rgba(255,255,255,.03)
-);
-
+background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
 border:1px solid rgba(255,255,255,.08);
-
-box-shadow:
-0 10px 30px rgba(0,0,0,.35),
-0 0 25px rgba(59,130,246,.18);
-
+box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 25px rgba(59,130,246,.18);
 transition:.4s;
-
 }
 
 .logo:hover{
-
-transform:
-translateY(-3px)
-scale(1.03)
-rotate(2deg);
-
+transform: translateY(-3px) scale(1.03) rotate(2deg);
 }
 
 .brand-title{
-
 font-size:34px;
-
 font-weight:900;
-
 line-height:1.1;
-
 letter-spacing:.5px;
-
 }
 
 .brand-sub{
-
 margin-top:8px;
-
 font-size:14px;
-
 color:var(--soft);
-
 letter-spacing:1px;
-
 }
 
 .live-box{
-
 display:flex;
 align-items:center;
 gap:12px;
-
 padding:14px 18px;
-
 border-radius:18px;
-
-background:
-rgba(255,255,255,.05);
-
+background: rgba(255,255,255,.05);
 border:1px solid rgba(255,255,255,.06);
-
 backdrop-filter:blur(12px);
-
 font-weight:800;
-
 font-size:14px;
-
 box-shadow:var(--shadow);
-
 }
 
 .dot{
-
 width:12px;
 height:12px;
-
 border-radius:50%;
-
 background:var(--success);
-
-box-shadow:
-0 0 20px var(--success);
-
+box-shadow: 0 0 20px var(--success);
 animation:pulse 1.5s infinite;
-
 }
 
 @keyframes pulse{
-
-0%{
-transform:scale(1);
-opacity:1;
+0%{ transform:scale(1); opacity:1; }
+50%{ transform:scale(1.35); opacity:.7; }
+100%{ transform:scale(1); opacity:1; }
 }
 
-50%{
-transform:scale(1.35);
-opacity:.7;
-}
-
-100%{
-transform:scale(1);
-opacity:1;
-}
-
-}
-
-.login-box,
-.profile-box,
-.info-card,
-.kas-calendar{
-
-background:
-linear-gradient(
-145deg,
-rgba(15,23,42,.82),
-rgba(2,6,23,.92)
-);
-
+.login-box, .profile-box, .info-card{
+background: linear-gradient(145deg, rgba(15,23,42,.82), rgba(2,6,23,.92));
 border:1px solid rgba(255,255,255,.06);
-
 backdrop-filter:blur(16px);
-
-box-shadow:
-0 10px 40px rgba(0,0,0,.35);
-
+box-shadow: 0 10px 40px rgba(0,0,0,.35);
 border-radius:32px;
-
 }
 
-.login-box,
-.profile-box{
-
+.login-box, .profile-box{
 padding:34px;
-
 margin-bottom:24px;
-
 display:none;
-
 }
 
 .active{
@@ -326,55 +178,32 @@ display:block;
 }
 
 h1{
-
 font-size:42px;
-
 font-weight:900;
-
 line-height:1.1;
-
 margin-bottom:10px;
-
 text-align:center;
-
 }
 
 .subtitle{
-
 text-align:center;
-
 font-size:14px;
-
 color:var(--soft);
-
 margin-bottom:26px;
-
 }
 
 input{
-
 width:100%;
-
 padding:18px;
-
 margin-bottom:16px;
-
 border:none;
 outline:none;
-
 border-radius:18px;
-
-background:
-rgba(255,255,255,.04);
-
+background: rgba(255,255,255,.04);
 border:1px solid rgba(255,255,255,.06);
-
 color:white;
-
 font-size:15px;
-
 transition:.3s;
-
 }
 
 input::placeholder{
@@ -382,15 +211,9 @@ color:#64748b;
 }
 
 input:focus{
-
 border-color:rgba(96,165,250,.55);
-
-background:
-rgba(255,255,255,.06);
-
-box-shadow:
-0 0 0 5px rgba(59,130,246,.12);
-
+background: rgba(255,255,255,.06);
+box-shadow: 0 0 0 5px rgba(59,130,246,.12);
 }
 
 .btn{
@@ -402,216 +225,105 @@ cursor:pointer;
 font-size:15px;
 font-weight:800;
 transition:.35s;
-
 }
 
 .btn:hover{
-
-transform:
-translateY(-2px);
-
+transform: translateY(-2px);
 }
 
-.btn-login,
-
-.btn-show-jadwal{
-
+.btn-login, .btn-show-jadwal{
 position:relative;
-
 width:100%;
-
 display:flex;
 align-items:center;
 justify-content:center;
 gap:14px;
-
 padding:18px 22px;
-
 border:none;
-
 border-radius:24px;
-
 cursor:pointer;
-
 overflow:hidden;
-
 font-size:15px;
 font-weight:900;
-
 letter-spacing:.8px;
-
 color:white;
-
-background:
-linear-gradient(
-135deg,
-#2563eb 0%,
-#3b82f6 35%,
-#60a5fa 100%
-);
-
-box-shadow:
-0 12px 30px rgba(37,99,235,.35),
-0 0 25px rgba(96,165,250,.15);
-
+background: linear-gradient(135deg, #2563eb 0%, #3b82f6 35%, #60a5fa 100% );
+box-shadow: 0 12px 30px rgba(37,99,235,.35), 0 0 25px rgba(96,165,250,.15);
 transition:.35s ease;
-
 backdrop-filter:blur(10px);
-
 }
 
-/* glow background */
 .btn-show-jadwal::before{
-
 content:"";
-
 position:absolute;
-
 inset:0;
-
-background:
-linear-gradient(
-120deg,
-transparent,
-rgba(255,255,255,.25),
-transparent
-);
-
+background: linear-gradient(120deg, transparent, rgba(255,255,255,.25), transparent);
 transform:translateX(-120%);
-
 transition:.7s;
-
 }
 
-/* efek shine */
 .btn-show-jadwal:hover::before{
-
 transform:translateX(120%);
-
 }
 
-/* hover */
 .btn-show-jadwal:hover{
-
-transform:
-translateY(-3px)
-scale(1.01);
-
-box-shadow:
-0 18px 40px rgba(37,99,235,.45),
-0 0 40px rgba(96,165,250,.25);
-
+transform: translateY(-3px) scale(1.01);
+box-shadow: 0 18px 40px rgba(37,99,235,.45), 0 0 40px rgba(96,165,250,.25);
 }
 
-/* click */
 .btn-show-jadwal:active{
-
 transform:scale(.98);
-
 }
 
-/* icon */
 .btn-show-jadwal i{
-
 font-size:20px;
-
-filter:
-drop-shadow(0 0 10px rgba(255,255,255,.45));
-
+filter: drop-shadow(0 0 10px rgba(255,255,255,.45));
 transition:.3s;
-
 }
 
-/* icon animasi */
 .btn-show-jadwal:hover i{
-
-transform:
-rotate(-8deg)
-scale(1.15);
-
+transform: rotate(-8deg) scale(1.15);
 }
 
-/* tulisan */
 .btn-show-jadwal span{
-
 position:relative;
 z-index:2;
-
 }
 
-/* tambahan efek garis */
 .btn-show-jadwal::after{
-
 content:"";
-
 position:absolute;
-
 bottom:0;
 left:10%;
-
 width:80%;
 height:1px;
-
-background:
-rgba(255,255,255,.35);
-
+background: rgba(255,255,255,.35);
 border-radius:999px;
-
 }
 
-/* MOBILE */
 @media(max-width:768px){
-
 .btn-show-jadwal{
-
 padding:16px 18px;
-
 font-size:14px;
-
 border-radius:20px;
-
 }
-
 .btn-show-jadwal i{
-
 font-size:18px;
-
 }
-
 }
-
-/* =========================================================
-   ALERT
-========================================================= */
 
 .notif-alert{
-
 padding:18px;
-
 border-radius:20px;
-
 font-size:14px;
-
 font-weight:800;
-
 margin-bottom:24px;
-
 text-align:center;
-
-background:
-linear-gradient(
-135deg,
-rgba(239,68,68,.95),
-rgba(185,28,28,.95)
-);
-
+background: linear-gradient(135deg, rgba(239,68,68,.95), rgba(185,28,28,.95));
 color:white;
-
-box-shadow:
-0 10px 30px rgba(239,68,68,.28);
-
+box-shadow: 0 10px 30px rgba(239,68,68,.28);
 }
-/* Animasi Berkedip & Menyala (Glowing Pulse) */
+
 @keyframes warningGlow {
     0% {
         background: linear-gradient(135deg, #ef4444, #b91c1c);
@@ -621,7 +333,7 @@ box-shadow:
     50% {
         background: linear-gradient(135deg, #ff5f5f, #ef4444);
         box-shadow: 0 0 25px rgba(239, 68, 68, 0.8), 0 0 50px rgba(239, 68, 68, 0.4);
-        transform: scale(1.02); /* Sedikit membesar saat menyala */
+        transform: scale(1.02);
     }
     100% {
         background: linear-gradient(135deg, #ef4444, #b91c1c);
@@ -630,7 +342,6 @@ box-shadow:
     }
 }
 
-/* Class khusus untuk Peringatan Keras */
 .alert-danger-active {
     animation: warningGlow 1.5s infinite ease-in-out;
     border: 2px solid rgba(255, 255, 255, 0.3);
@@ -638,941 +349,342 @@ box-shadow:
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-
-/* =========================================================
-   INFO CARD
-========================================================= */
-
 .info-card{
-
-animation:textGlow 2s infinite ease-in-out;
-
 position:relative;
-
 padding:28px;
-
 overflow:hidden;
-
 margin-bottom:24px;
-
-background:
-linear-gradient(
-rgba(2,6,23,.82),
-rgba(2,6,23,.88)
-),
-url('https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2017.16.40.png');
-
+background: linear-gradient( rgba(2,6,23,.82), rgba(2,6,23,.88) ), url('https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2017.16.40.png');
 background-size:cover;
 background-position:center;
-
 color:#ffffff;
-
-text-shadow:
-0 0 5px rgba(255,255,255,.25),
-0 0 10px rgba(96,165,250,.25),
-0 0 20px rgba(59,130,246,.18);
-
-}
-@keyframes textGlow{
-
-0%{
-text-shadow:
-0 0 5px rgba(255,255,255,.2),
-0 0 10px rgba(96,165,250,.2),
-0 0 20px rgba(59,130,246,.15);
-}
-
-50%{
-text-shadow:
-0 0 10px rgba(255,255,255,.45),
-0 0 20px rgba(96,165,250,.45),
-0 0 40px rgba(59,130,246,.35);
-}
-
-100%{
-text-shadow:
-0 0 5px rgba(255,255,255,.2),
-0 0 10px rgba(96,165,250,.2),
-0 0 20px rgba(59,130,246,.15);
-}
-
 }
 
 .info-card::before{
-
 content:"";
-
 position:absolute;
-
 inset:0;
-
-background:
-linear-gradient(
-135deg,
-rgba(59,130,246,.08),
-transparent 50%
-);
-
+background: linear-gradient( 135deg, rgba(59,130,246,.08), transparent 50% );
 pointer-events:none;
-
 }
 
 .info-row{
-
 display:flex;
 justify-content:space-between;
 align-items:center;
-
 gap:18px;
-
 padding:16px 0;
-
-border-bottom:
-1px solid rgba(255,255,255,.05);
-
+border-bottom: 1px solid rgba(255,255,255,.05);
 }
 
 .label{
-
 font-size:14px;
-
 color:var(--soft);
-
 }
 
 .val{
-
 font-size:16px;
-
 font-weight:800;
-
 text-align:right;
-
 }
 
-/* =========================================================
-   BADGE
-========================================================= */
-
 .badge{
-
 padding:9px 16px;
-
 border-radius:999px;
-
 font-size:12px;
-
 font-weight:900;
-
 letter-spacing:.5px;
-
 }
 
 .lunas{
-
-background:
-linear-gradient(
-135deg,
-#16a34a,
-#22c55e
-);
-
+background: linear-gradient( 135deg, #16a34a, #22c55e );
 color:white;
-
-box-shadow:
-0 0 20px rgba(34,197,94,.25);
-
+box-shadow: 0 0 20px rgba(34,197,94,.25);
 }
 
 .belum{
-
-background:
-linear-gradient(
-135deg,
-#b91c1c,
-#ef4444
-);
-
+background: linear-gradient( 135deg, #b91c1c, #ef4444 );
 color:white;
-
-box-shadow:
-0 0 20px rgba(239,68,68,.25);
-
+box-shadow: 0 0 20px rgba(239,68,68,.25);
 }
 
 .wa-link{
-
 color:#4ade80;
-
 font-weight:800;
-
 text-decoration:none;
-
 transition:.3s;
-
 }
 
 .wa-link:hover{
-
 opacity:.8;
-
 }
-
-/* =========================================================
-   SCHEDULE
-========================================================= */
 
 .schedule-box{
 margin-top:24px;
 }
 
 .schedule-title{
-
 font-size:20px;
-
 font-weight:900;
-
 margin-bottom:16px;
-
 }
 
 .modal-jadwal{
-
 display:none;
-
 position:fixed;
-
 inset:0;
-
 padding:20px;
-
-background:
-rgba(0,0,0,.8);
-
+background: rgba(0,0,0,.8);
 backdrop-filter:blur(10px);
-
 z-index:9999;
-
 overflow-y:auto;
-
 animation:fade .3s ease;
-
 }
 
 @keyframes fade{
-
-from{
-opacity:0;
-}
-
-to{
-opacity:1;
-}
-
+from{ opacity:0; }
+to{ opacity:1; }
 }
 
 .modal-jadwal-content{
-
 max-width:650px;
-
 margin:40px auto;
-
 padding:26px;
-
 border-radius:30px;
-
-background:
-linear-gradient(
-145deg,
-#0f172a,
-#020617
-);
-
+background: linear-gradient( 145deg, #0f172a, #020617 );
 border:1px solid rgba(255,255,255,.08);
-
-box-shadow:
-0 20px 60px rgba(0,0,0,.45);
-
+box-shadow: 0 20px 60px rgba(0,0,0,.45);
 }
 
 .close-jadwal{
-
 float:right;
-
 font-size:34px;
-
 cursor:pointer;
-
 transition:.3s;
-
 }
 
 .close-jadwal:hover{
-
 transform:rotate(90deg);
-
 color:#60a5fa;
-
 }
 
 .day-card{
-
-background:
-rgba(255,255,255,.03);
-
+background: rgba(255,255,255,.03);
 border:1px solid rgba(255,255,255,.05);
-
 padding:18px;
-
 border-radius:24px;
-
 margin-bottom:16px;
-
 }
 
 .day-title{
-
 font-size:18px;
-
 font-weight:900;
-
 color:#60a5fa;
-
 margin-bottom:14px;
-
 text-transform:uppercase;
-
 }
 
 .session-card{
-
 display:flex;
 justify-content:space-between;
 align-items:center;
-
 gap:16px;
-
 padding:14px 18px;
-
 border-radius:18px;
-
 margin-bottom:10px;
-
-background:
-rgba(255,255,255,.03);
-
+background: rgba(255,255,255,.03);
 transition:.3s;
-
 }
 
 .session-card:hover{
-
 transform:translateX(5px);
-
-background:
-rgba(255,255,255,.06);
-
+background: rgba(255,255,255,.06);
 }
 
 .session-type{
-
 font-size:11px;
-
 font-weight:800;
-
 letter-spacing:1px;
-
 color:#60a5fa;
-
 margin-bottom:3px;
-
 }
 
 .session-jam{
-
 font-size:20px;
-
 font-weight:900;
-
 }
 
 .session-badge{
-
 padding:8px 14px;
-
 border-radius:999px;
-
 background:#16a34a;
-
 font-size:11px;
-
 font-weight:900;
-
 }
 
-/* =========================================================
-   HISTORY
-========================================================= */
-
 .history-title{
-
 font-size:24px;
-
 font-weight:900;
-
-margin:
-28px 0 18px;
-
+margin: 28px 0 18px;
 }
 
 .hist-item{
-
 display:flex;
 justify-content:space-between;
 align-items:center;
-
 padding:18px;
-
 margin-bottom:12px;
-
 border-radius:20px;
-
-background:
-rgba(255,255,255,.04);
-
+background: rgba(255,255,255,.04);
 border:1px solid rgba(255,255,255,.05);
-
 transition:.3s;
-
 }
 
 .hist-item:hover{
-
 transform:translateY(-2px);
-
-background:
-rgba(255,255,255,.06);
-
+background: rgba(255,255,255,.06);
 }
-
-/* =========================================================
-   KAS CALENDAR
-========================================================= */
-
-.kas-calendar{
-
-padding:26px;
-
-margin-top:24px;
-
-}
-
-.kas-title{
-
-font-size:24px;
-
-font-weight:900;
-
-margin-bottom:22px;
-
-}
-
-.kas-grid{
-
-display:grid;
-
-grid-template-columns:
-repeat(4,1fr);
-
-gap:14px;
-
-}
-
-.kas-week{
-
-padding:18px 10px;
-
-border-radius:22px;
-
-text-align:center;
-
-background:
-rgba(255,255,255,.03);
-
-border:1px solid rgba(255,255,255,.05);
-
-transition:.35s;
-
-}
-
-.kas-week:hover{
-
-transform:
-translateY(-3px);
-
-}
-
-.kas-week.current{
-
-border:
-1px solid #60a5fa;
-
-box-shadow:
-0 0 25px rgba(96,165,250,.18);
-
-}
-
-.kas-week .minggu{
-
-font-size:13px;
-
-opacity:.75;
-
-margin-bottom:8px;
-
-}
-
-.kas-week .status{
-
-font-size:28px;
-
-margin-bottom:6px;
-
-}
-
-.kas-week .text{
-
-font-size:12px;
-
-font-weight:700;
-
-}
-
-/* =========================================================
-   PROGRESS
-========================================================= */
-
-.progress-bar{
-
-height:14px;
-
-margin-top:20px;
-
-background:
-rgba(255,255,255,.05);
-
-border-radius:999px;
-
-overflow:hidden;
-
-}
-
-.progress-fill{
-
-height:100%;
-
-width:0;
-
-border-radius:999px;
-
-background:
-linear-gradient(
-90deg,
-#22c55e,
-#4ade80
-);
-
-transition:1s;
-
-}
-
-.progress-text{
-
-margin-top:10px;
-
-text-align:center;
-
-font-size:13px;
-
-color:var(--soft);
-
-}
-
-/* =========================================================
-   FOOTER
-========================================================= */
 
 .footer-pro{
-
 text-align:center;
-
 padding:34px 20px;
-
 opacity:.8;
-
 }
 
 .footer-title{
-
 font-size:24px;
-
 font-weight:900;
-
 margin-bottom:8px;
-
 }
 
 .footer-sub{
-
 font-size:14px;
-
 margin-bottom:8px;
-
 color:var(--soft);
-
 }
 
 .footer-copy{
-
 font-size:12px;
-
 color:#64748b;
-
 }
-
-/* =========================================================
-   MOBILE
-========================================================= */
 
 @media(max-width:768px){
-
-body{
-padding:14px;
+body{ padding:14px; }
+.topbar{ flex-direction:column; align-items:flex-start; padding:22px; border-radius:28px; }
+.brand-title{ font-size:26px; }
+.logo{ width:72px; height:72px; }
+.live-box{ align-self:flex-end; }
+.login-box, .profile-box, .info-card{ padding:24px; }
+h1{ font-size:34px; }
+.info-row{ flex-direction:column; align-items:flex-start; }
+.val{ text-align:left; }
+.modal-jadwal-content{ padding:20px; border-radius:24px; }
+.session-card{ flex-direction:column; align-items:flex-start; }
 }
-
-.topbar{
-
-flex-direction:column;
-align-items:flex-start;
-
-padding:22px;
-
-border-radius:28px;
-
-}
-
-.brand-title{
-
-font-size:26px;
-
-}
-
-.logo{
-
-width:72px;
-height:72px;
-
-}
-
-.live-box{
-
-align-self:flex-end;
-
-}
-
-.login-box,
-.profile-box,
-.info-card,
-.kas-calendar{
-
-border-radius:26px;
-
-}
-
-.login-box,
-.profile-box{
-
-padding:24px;
-
-}
-
-h1{
-
-font-size:34px;
-
-}
-
-.info-row{
-
-flex-direction:column;
-align-items:flex-start;
-
-}
-
-.val{
-
-text-align:left;
-
-}
-
-.kas-grid{
-
-grid-template-columns:
-repeat(2,1fr);
-
-}
-
-.modal-jadwal-content{
-
-padding:20px;
-
-border-radius:24px;
-
-}
-
-.session-card{
-
-flex-direction:column;
-align-items:flex-start;
-
-}
-
-}
-/* =========================================
-   FORGOT PASSWORD
-========================================= */
 
 .forgot-box{
-
 display:flex;
 justify-content:flex-end;
-
 margin-top:-6px;
 margin-bottom:18px;
-
 }
 
 .forgot-link{
-
 font-size:13px;
-
 font-weight:700;
-
 color:#60a5fa;
-
 text-decoration:none;
-
 position:relative;
-
 transition:.3s;
-
 letter-spacing:.3px;
-
 }
 
-/* garis animasi */
 .forgot-link::after{
-
 content:"";
-
 position:absolute;
-
 left:0;
 bottom:-3px;
-
 width:0%;
 height:2px;
-
 background:#60a5fa;
-
 border-radius:999px;
-
 transition:.35s;
-
 }
 
 .forgot-link:hover{
-
 color:#93c5fd;
-
-text-shadow:
-0 0 12px rgba(96,165,250,.45);
-
+text-shadow: 0 0 12px rgba(96,165,250,.45);
 }
 
 .forgot-link:hover::after{
-
 width:100%;
-
 }
 
-/* MOBILE */
 @media(max-width:768px){
-
-.forgot-link{
-
-font-size:12px;
-
+.forgot-link{ font-size:12px; }
 }
-
-}
-.download-brosur{
-color:#60a5fa;
-font-weight:700;
-text-decoration:none;
-transition:.3s;
-}
-
-.download-brosur:hover{
-color:#93c5fd;
-text-shadow:0 0 12px rgba(96,165,250,.45);
-}
-/* =========================================
-   IZIN LATIHAN
-========================================= */
 
 .izin-box{
-
 margin-top:18px;
-
 padding:20px;
-
 border-radius:24px;
-
-background:
-linear-gradient(
-145deg,
-rgba(255,255,255,.04),
-rgba(255,255,255,.02)
-);
-
+background: linear-gradient( 145deg, rgba(255,255,255,.04), rgba(255,255,255,.02) );
 border:1px solid rgba(255,255,255,.06);
-
 text-align:center;
-
-backdrop-filter:blur(10px);
-
 }
 
 .izin-text{
-
 font-size:14px;
-
 font-weight:700;
-
 color:#cbd5e1;
-
 margin-bottom:16px;
-
 line-height:1.5;
-
 }
 
 .btn-izin{
-
 display:flex;
-
 align-items:center;
 justify-content:center;
-
 width:100%;
-
 padding:16px;
-
 border-radius:18px;
-
 text-decoration:none;
-
 font-size:15px;
-
 font-weight:900;
-
 letter-spacing:.5px;
-
 color:white;
-
-background:
-linear-gradient(
-135deg,
-#16a34a,
-#22c55e
-);
-
-box-shadow:
-0 10px 25px rgba(34,197,94,.25);
-
+background: linear-gradient( 135deg, #16a34a, #22c55e );
+box-shadow: 0 10px 25px rgba(34,197,94,.25);
 transition:.3s;
-
 }
 
 .btn-izin:hover{
-
-transform:
-translateY(-2px)
-scale(1.01);
-
-box-shadow:
-0 16px 35px rgba(34,197,94,.4);
-
+transform: translateY(-2px) scale(1.01);
+box-shadow: 0 16px 35px rgba(34,197,94,.4);
 }
-/* =========================================
-   DOWNLOAD BROSUR BUTTON
-========================================= */
 
 .btn-download-brosur{
-
 display:flex;
-
 align-items:center;
 justify-content:center;
-
 width:100%;
-
 padding:18px;
-
 margin-bottom:22px;
-
 border-radius:22px;
-
 text-decoration:none;
-
 font-size:15px;
-
 font-weight:900;
-
 letter-spacing:.3px;
-
 color:white;
-
-background:
-linear-gradient(
-135deg,
-#2563eb,
-#3b82f6,
-#60a5fa
-);
-
-box-shadow:
-0 12px 30px rgba(37,99,235,.30);
-
+background: linear-gradient( 135deg, #2563eb, #3b82f6, #60a5fa );
+box-shadow: 0 12px 30px rgba(37,99,235,.30);
 transition:.35s ease;
-
 }
 
 .btn-download-brosur:hover{
-
-transform:
-translateY(-3px)
-scale(1.01);
-
-box-shadow:
-0 18px 40px rgba(37,99,235,.45),
-0 0 35px rgba(96,165,250,.25);
-
+transform: translateY(-3px) scale(1.01);
+box-shadow: 0 18px 40px rgba(37,99,235,.45), 0 0 35px rgba(96,165,250,.25);
 }
-/* =========================================
-   PERFORMANCE MODE ANDROID
-========================================= */
 
 *{
 -webkit-tap-highlight-color:transparent;
@@ -1583,145 +695,77 @@ background:#020617 !important;
 overflow-x:hidden;
 }
 
-/* MATIKAN BLUR BERAT */
-.topbar,
-.login-box,
-.profile-box,
-.info-card,
-.kas-calendar,
-.live-box,
-.modal-jadwal,
-.modal-jadwal-content,
-.izin-box{
-
-backdrop-filter:none !important;
-
+.payment-box{
+margin-top:24px;
+padding:24px;
+border-radius:28px;
+background: linear-gradient( 145deg, rgba(15,23,42,.82), rgba(2,6,23,.92) );
+border:1px solid rgba(255,255,255,.06);
 }
 
-/* RINGANKAN SHADOW */
-.topbar,
-.login-box,
-.profile-box,
-.info-card,
-.kas-calendar{
-
-box-shadow:
-0 4px 14px rgba(0,0,0,.18) !important;
-
+.payment-title{
+font-size:22px;
+font-weight:900;
+margin-bottom:18px;
 }
 
-/* MATIKAN GLOW BERAT */
-.info-card{
-animation:none !important;
-text-shadow:none !important;
+.payment-card{
+padding:18px;
+border-radius:22px;
+background: rgba(255,255,255,.04);
+border:1px solid rgba(255,255,255,.05);
+margin-bottom:14px;
 }
 
-/* ALERT LEBIH RINGAN */
-.alert-danger-active{
-animation:warningSimple 2s infinite !important;
+.payment-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
 }
 
-@keyframes warningSimple{
-0%{opacity:1;}
-50%{opacity:.75;}
-100%{opacity:1;}
+.payment-week{
+font-size:15px;
+font-weight:800;
 }
 
-/* BUTTON LEBIH RINGAN */
-.btn-show-jadwal::before,
-.btn-show-jadwal::after{
-display:none !important;
+.payment-nominal{
+font-size:14px;
+color:#94a3b8;
 }
 
-.btn-show-jadwal:hover,
-.btn-login:hover,
-.btn-download-brosur:hover,
-.btn-izin:hover{
-
-transform:none !important;
-
-box-shadow:
-0 6px 16px rgba(37,99,235,.22) !important;
-
+.payment-status{
+padding:8px 14px;
+border-radius:999px;
+font-size:12px;
+font-weight:900;
 }
 
-/* MATIKAN ROTATE ICON */
-.btn-show-jadwal:hover i{
-transform:none !important;
+.status-lunas{
+background:#16a34a;
+color:white;
 }
 
-/* RINGANKAN SESSION */
-.session-card:hover,
-.hist-item:hover,
-.kas-week:hover{
-transform:none !important;
-}
-
-/* SCROLLBAR SIMPLE */
-::-webkit-scrollbar{
-width:4px;
-}
-
-::-webkit-scrollbar-thumb{
-background:#334155;
-}
-
-/* MOBILE EXTRA OPTIMIZATION */
-@media(max-width:768px){
-
-.topbar{
-padding:18px !important;
-}
-
-.logo{
-width:68px !important;
-height:68px !important;
-}
-
-.brand-title{
-font-size:24px !important;
-}
-
-h1{
-font-size:30px !important;
-}
-
-.login-box,
-.profile-box{
-padding:20px !important;
-}
-
-.info-card,
-.kas-calendar{
-padding:20px !important;
-}
-
+.status-belum{
+background:#dc2626;
+color:white;
 }
     </style>
 </head>
 <body>
 <div class="topbar">
-
-<div class="brand-area">
-<img src="https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2016.20.14..png" class="logo">
-
-<div>
-<div class="brand-title">
-BMI TAEKWONDO ACADEMY
+    <div class="brand-area">
+        <img src="https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2016.20.14..png" class="logo">
+        <div>
+            <div class="brand-title">BMI TAEKWONDO ACADEMY</div>
+            <div class="brand-sub">Member Portal • Martial Arts Academy</div>
+        </div>
+    </div>
+    <div class="live-box">
+        <div class="dot"></div>ONLINE
+    </div>
 </div>
 
-<div class="brand-sub">
-Member Portal • Martial Arts Academy
-</div>
-</div>
-</div>
-
-<div class="live-box">
-<div class="dot"></div>
-ONLINE
-</div>
-
-</div>
 <div class="container">
     <div id="loginSection" class="login-box active">
         <h1>Member Login</h1>
@@ -1729,136 +773,72 @@ ONLINE
         <input type="text" id="userInp" placeholder="Username">
         <input type="password" id="passInp" placeholder="Password">
 
-<div class="forgot-box">
-<a 
-href="https://wa.me/6285741163911?text=Shabeum,%20saya%20lupa%20username%20dan%20Password%20untuk%20aplikasi%20BMI%20,%20mohon%20untuk%20di%20kirim%20ke%20saya%20lagi%20agar%20saya%20bisa%20masuk%20ke%20aplikasi%20BMI%20kembali%20🙏"
-target="_blank"
-class="forgot-link"
->
-Lupa Username & Password?
-</a>
-</div>
+        <div class="forgot-box">
+            <a href="https://wa.me/6285741163911?text=Shabeum,%20saya%20lupa%20username%20dan%20Password%20untuk%20aplikasi%20BMI%20,%20mohon%20untuk%20di%20kirim%20ke%20saya%20lagi%20agar%20saya%20bisa%20masuk%20ke%20aplikasi%20BMI%20kembali%20🙏" target="_blank" class="forgot-link">Lupa Username & Password?</a>
+        </div>
 
-<button class="btn btn-login" onclick="login()">
-Masuk ke Dashboard
-</button>
-        
+        <button class="btn btn-login" onclick="login()">Masuk ke Dashboard</button>
     </div>
 
     <div id="profileSection" class="profile-box">
         <h1 id="welcomeName" style="color: #fff;">Halo!</h1>
-        <p 
-class="subtitle" 
-id="memberUser"
-style="
-color:#60a5fa;
-font-weight:700;
-cursor:pointer;
-"
-</p>
+        <p class="subtitle" id="memberUser" style="color:#60a5fa; font-weight:700; cursor:pointer;"></p>
 
         <div id="alertBox" style="display:none;" class="notif-alert">
             ⚠️ Perhatian: Anda memiliki tunggakan kewajiban!
         </div>
 
-<a 
-href="https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Brosur.png"
-download="Brosur-BMI-Taekwondo.png"
-class="btn-download-brosur"
->
-Download Brosur dan bagikan ke Sosial Media
-</a>
+        <a href="https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Brosur.png" download="Brosur-BMI-Taekwondo.png" class="btn-download-brosur">Download Brosur dan bagikan ke Sosial Media</a>
 
         <div class="info-card">
             <div class="info-row"><span class="label">Status kewajiban</span><span id="statusTag"></span></div>
             <div class="info-row">
-    <span class="label">Jenis Pembayaran</span>
-    <span class="val">Kas Mingguan • Rp5.000</span>
-</div>
+                <span class="label">Jenis Pembayaran</span>
+                <span class="val">Kas Mingguan • Rp5.000</span>
+            </div>
             <div class="info-row"><span class="label">Warna Sabuk</span><span class="val" id="valSabuk">-</span></div>
             <div class="info-row"><span class="label">Tgl Lahir</span><span class="val" id="valTgl">-</span></div>
             <div class="info-row"><span class="label">WhatsApp</span><span class="val" id="valWA">-</span></div>
             <div class="info-row"><span class="label">Fisik (Berat/Tinggi)</span><span class="val" id="valFisik">-</span></div>
-             <div class="info">
-<div class="schedule-box">
-<div class="schedule-title">📅 Jadwal Latihan</div>
-
-<button class="btn-show-jadwal" onclick="toggleJadwal(true)">
-    <i class="fa-solid fa-calendar-days"></i>
-    <span>JADWAL LATIHAN</span>
-</button>
-
-<div class="izin-box">
-
-<div class="izin-text">
-Jika hari ini mau ijin tidak berangkat latihan
-</div>
-
-<a 
-href="https://wa.me/+62882003007515?text=Shabum%20Widya%20yang%20Cantik,%20Maaf%20hari%20ini%20anak%20saya%20ijin%20tidak%20bisa%20Hadir%20mengikuti%20latihan,%20harap%20di%20maklumi%20ya%20Shabeum"
-target="_blank"
-class="btn-izin"
->
-KLIK IJIN
-</a>
-
-</div>
-
-<div id="modalJadwal" class="modal-jadwal">
-    <div class="modal-jadwal-content">
-        <span class="close-jadwal" onclick="toggleJadwal(false)">&times;</span>
-        <h2 style="margin-bottom: 25px; color: #60a5fa; font-weight: 900;">
-            <i class="fa-solid fa-calendar-check"></i> Master Schedule
-        </h2>
-        <div id="jadwal"></div> </div>
-</div>
-
-</div>
-</div>
+            <div class="info">
+                <div class="schedule-box">
+                    <div class="schedule-title">📅 Jadwal Latihan</div>
+                    <button class="btn-show-jadwal" onclick="toggleJadwal(true)">
+                        <span>JADWAL LATIHAN</span>
+                    </button>
+                    <div class="izin-box">
+                        <div class="izin-text">Jika hari ini mau ijin tidak berangkat latihan</div>
+                        <a href="https://wa.me/+62882003007515?text=Shabum%20Widya%20yang%20Cantik,%20Maaf%20hari%20ini%20anak%20saya%20ijin%20tidak%20bisa%20Hadir%20mengikuti%20latihan,%20harap%20di%20maklumi%20ya%20Shabeum" target="_blank" class="btn-izin">KLIK IJIN</a>
+                    </div>
+                    <div id="modalJadwal" class="modal-jadwal">
+                        <div class="modal-jadwal-content">
+                            <span class="close-jadwal" onclick="toggleJadwal(false)">&times;</span>
+                            <h2 style="margin-bottom: 25px; color: #60a5fa; font-weight: 900;">Master Schedule</h2>
+                            <div id="jadwal"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-<div class="kas-calendar">
 
-<div class="kas-title">
-💳 Kalender Kas Mingguan
-</div>
+        <div class="payment-box">
+            <div class="payment-title">📌 Status Pembayaran</div>
+            <div id="paymentStatus"></div>
+        </div>
 
-<div id="kasCalendar" class="kas-grid"></div>
-
-<div class="kas-progress">
-
-<div class="progress-bar">
-<div id="progressKas" class="progress-fill"></div>
-</div>
-
-<div id="progressText" class="progress-text">
-0/4 Minggu Dibayar
-</div>
-
-</div>
-
-</div>
         <div class="history-title">Riwayat Pembayaran</div>
-        
         <div id="historyContainer"></div>
 
         <button class="btn" style="background:#475569; color:white; margin-top:20px;" onclick="logout()">Keluar</button>
     </div>
 </div>
+
 <div class="footer-pro">
-
-<div class="footer-title">
-BMI TAEKWONDO ACADEMY
+    <div class="footer-title">BMI TAEKWONDO ACADEMY</div>
+    <div class="footer-sub">Discipline • Honor • Excellence</div>
+    <div class="footer-copy">© 2026 All Rights Reserved</div>
 </div>
 
-<div class="footer-sub">
-Discipline • Honor • Excellence
-</div>
-
-<div class="footer-copy">
-© 2026 All Rights Reserved
-</div>
-
-</div>
 <script>
 // --- KONFIGURASI FIREBASE ---
 const firebaseConfig = {
@@ -1871,15 +851,20 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-function getMingguKey() {
-    const now = new Date();
 
+function getMingguKe() {
+    const now = new Date();
+    const tanggal = now.getDate();
+    if (tanggal < 3) return 4;
+    if (tanggal >= 31) return 1;
+    return Math.floor((tanggal - 3) / 7) + 1;
+}
+
+function getMingguKey() {
+    const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
     const tahun = now.getFullYear();
     const bulan = now.getMonth() + 1;
-    const tanggal = now.getDate();
-
-    const mingguKe = Math.ceil(tanggal / 7);
-
+    const mingguKe = getMingguKe();
     return `${tahun}-${bulan}-Minggu-${mingguKe}`;
 }
 
@@ -1899,10 +884,8 @@ function login() {
               alert("Username atau Password salah!");
           } else {
               const dataSiswa = snapshot.docs[0].data();
-              // Simpan data login ke memori HP
               localStorage.setItem("bmi_member_login", JSON.stringify({username: dataSiswa.username}));
               
-              // Sembunyikan kotak login, tampilkan profil
               document.getElementById("loginSection").classList.remove("active");
               document.getElementById("profileSection").classList.add("active");
               tampilkanProfil(dataSiswa);
@@ -1911,111 +894,116 @@ function login() {
       .catch(err => alert("Terjadi kesalahan koneksi: " + err));
 }
 
-// --- FUNGSI TAMPILKAN PROFIL ---
-// --- FUNGSI TAMPILKAN PROFIL ---
+//
+  // --- FUNGSI TAMPILKAN PROFIL ---
 function tampilkanProfil(data) {
-    // 1. Deklarasi Variabel Awal
     const now = new Date();
-    const mingguKeSekarang = Math.ceil(now.getDate() / 7);
-    const mingguSekarang = getMingguKey();
-    const alertBox = document.getElementById("alertBox"); // Deklarasi cukup sekali di sini
+    const mingguSekarangKey = getMingguKey();
+    const alertBox = document.getElementById("alertBox");
 
-    // 2. Tampilkan Data Dasar
+    // Tampilkan Data Dasar
     document.getElementById("welcomeName").innerText = "Halo, " + (data.nama || "Member") + "!";
     document.getElementById("memberUser").innerText = "@" + (data.username || "user");
     document.getElementById("valSabuk").innerText = data.warna_sabuk || "-";
     document.getElementById("valFisik").innerText = (data.berat_badan || 0) + "kg / " + (data.tinggi_badan || 0) + "cm";
-    
-    // Format Tanggal Lahir
     if(data.tanggal_lahir) {
         const p = data.tanggal_lahir.split("-");
-        const bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+        const bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","December"];
         document.getElementById("valTgl").innerText = `${p[2]} ${bulan[parseInt(p[1])-1]} ${p[0]}`;
     }
 
-    // Nomor WhatsApp
     if (data.nomor_hp) {
         document.getElementById("valWA").innerHTML = `<a href="https://wa.me/${data.nomor_hp}" target="_blank" class="wa-link">${data.nomor_hp}</a>`;
     }
-
-    // 3. Status Pembayaran Tag
+    // Status Pembayaran Tag
     const tag = document.getElementById("statusTag");
-    if(data.minggu_bayar === mingguSekarang) {
+    if(data.minggu_bayar === mingguSekarangKey) {
         tag.innerHTML = '<span class="badge lunas">LUNAS MINGGU INI</span>';
     } else {
         tag.innerHTML = '<span class="badge belum">BELUM BAYAR KAS</span>';
     }
 
-    // 4. Logika Peringatan (DENGAN ANIMASI)
+    // Logika Peringatan
     if (data.peringatan === true) {
         alertBox.style.display = "block";
-        if (data.minggu_bayar !== mingguSekarang) {
+        if (data.minggu_bayar !== mingguSekarangKey) {
             alertBox.classList.add("alert-danger-active");
             alertBox.innerHTML = `⚠️ <strong>PERINGATAN KERAS:</strong> Segera lunasi kewajiban Anda untuk minggu ini!`;
         } else {
             alertBox.classList.remove("alert-danger-active");
             alertBox.innerHTML = `⚠️ <strong>Perhatian:</strong> Harap cek kembali data administrasi Anda.`;
         }
-        // Update status di database bahwa sudah dilihat
         db.collection("siswa").where("username", "==", data.username).get().then(snap => {
             snap.forEach(doc => { doc.ref.update({ peringatan_dilihat: true }); });
         });
     } else {
         alertBox.style.display = "none";
     }
+    // Status Pembayaran Baru
+    const paymentBox = document.getElementById("paymentStatus");
+    const pembayaran = data.pembayaran || [];
+    let paymentHTML = "";
 
-    // 5. Kalender Kas Digital
-    const kasCalendar = document.getElementById("kasCalendar");
-    const riwayatKas = data.riwayat_kas || [];
-    let kalenderHTML = "";
-    let totalBayar = 0;
+    const mingguSekarangFormat = now.toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
 
-    for(let i = 1; i <= 4; i++){
-        let lunas = false;
-        riwayatKas.forEach(r => {
-            const teks = r.toLowerCase();
-            if(
-                (i === 1 && teks.includes("pertama")) ||
-                (i === 2 && teks.includes("kedua")) ||
-                (i === 3 && teks.includes("ketiga")) ||
-                (i === 4 && teks.includes("keempat"))
-            ) { lunas = true; }
-        });
+    let pembayaranMingguIni = pembayaran.find(p => p.minggu === mingguSekarangFormat);
 
-        let kelas = lunas ? "lunas" : "belum";
-        if(i === mingguKeSekarang) kelas += " current";
-        if(lunas) totalBayar++;
+   if(!pembayaranMingguIni){
 
-        kalenderHTML += `
-        <div class="kas-week ${kelas}">
-            <div class="minggu">Minggu ${i}</div>
-            <div class="status">${lunas ? "✅" : "💸"}</div>
-            <div class="text">${lunas ? "Sudah Bayar" : "Belum Bayar"}</div>
-        </div>`;
-    }
-    kasCalendar.innerHTML = kalenderHTML;
+    pembayaranMingguIni = {
+        minggu: mingguSekarangFormat,
+        nominal: 5000,
+        status:
+        data.minggu_bayar === mingguSekarangKey
+        ? "lunas"
+        : "belum"
+    };
+}
+    paymentHTML += `
+    <div class="payment-card">
+        <div class="payment-top">
+            <div>
+                <div class="payment-week">${pembayaranMingguIni.minggu}</div>
+                <div class="payment-nominal">Rp${pembayaranMingguIni.nominal.toLocaleString("id-ID")}</div>
+            </div>
+           <div class="payment-status ${
+data.minggu_bayar === mingguSekarangKey
+? "status-lunas"
+: "status-belum"
+}">
 
-    // Progress Bar
-    const persen = (totalBayar / 4) * 100;
-    document.getElementById("progressKas").style.width = persen + "%";
-    document.getElementById("progressText").innerText = `${totalBayar}/4 Minggu Sudah Dibayar`;
+${data.minggu_bayar === mingguSekarangKey
+? "LUNAS"
+: "BELUM"}
 
-    // 6. Riwayat Pembayaran List
-    let histHtml = "";
-    if(riwayatKas.length === 0) {
-        histHtml = "<p style='font-size:12px; opacity:0.5;'>Belum ada data pembayaran.</p>";
-    } else {
-        [...riwayatKas].sort().reverse().forEach(tgl => {
-            histHtml += `
+</div>
+        </div>
+    </div>`;
+    paymentBox.innerHTML = paymentHTML;
+
+    // Render Riwayat Pembayaran (Agar tidak kosong)
+    const historyContainer = document.getElementById("historyContainer");
+    if(pembayaran.length > 0) {
+        let histHTML = "";
+        pembayaran.forEach(p => {
+            histHTML += `
             <div class="hist-item">
-                <span>${tgl}</span>
-                <span style="font-weight:bold; color:#4ade80;">✅ Kas Dibayar</span>
+                <div>
+                    <div style="font-weight:800;">${p.minggu}</div>
+                    <div style="font-size:12px; color:#94a3b8;">Rp${p.nominal.toLocaleString("id-ID")}</div>
+                </div>
+                <div class="badge ${p.status === 'lunas' ? 'lunas' : 'belum'}">${p.status.toUpperCase()}</div>
             </div>`;
         });
+        historyContainer.innerHTML = histHTML;
+    } else {
+        historyContainer.innerHTML = "<p style='color:#94a3b8; font-size:14px;'>Belum ada riwayat pembayaran.</p>";
     }
-    document.getElementById("historyContainer").innerHTML = histHtml;
 }
-
 
 // --- JADWAL SYSTEM ---
 db.collection("jadwal").doc("global").onSnapshot(doc => {
@@ -2060,7 +1048,6 @@ window.onload = function(){
         document.getElementById("loginSection").classList.add("active");
     }
 }
-
 function logout(){
     localStorage.removeItem("bmi_member_login");
     location.reload();
@@ -2073,7 +1060,6 @@ function toggleJadwal(show) {
 window.onclick = function(event) {
     if (event.target == document.getElementById("modalJadwal")) toggleJadwal(false);
 }
-
 </script>
 </body>
 </html>
