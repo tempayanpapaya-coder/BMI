@@ -9,12 +9,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
     <style>
-/* =========================================================
-   BMI TAEKWONDO ACADEMY
-   MODERN GLASSMORPHISM ELITE UI
-   Focus: Premium • Clean • Mobile First
-========================================================= */
-
 :root{
 
 /* COLORS */
@@ -45,10 +39,6 @@
 0 0 30px rgba(59,130,246,.18);
 
 }
-
-/* =========================================================
-   RESET
-========================================================= */
 
 *{
 margin:0;
@@ -83,10 +73,6 @@ overflow-x:hidden;
 
 }
 
-/* =========================================================
-   SCROLLBAR
-========================================================= */
-
 ::-webkit-scrollbar{
 width:8px;
 }
@@ -105,10 +91,6 @@ background:linear-gradient(
 border-radius:20px;
 }
 
-/* =========================================================
-   CONTAINER
-========================================================= */
-
 .container{
 
 width:100%;
@@ -117,10 +99,6 @@ max-width:950px;
 margin:auto;
 
 }
-
-/* =========================================================
-   TOPBAR
-========================================================= */
 
 .topbar{
 
@@ -177,10 +155,6 @@ transparent 60%);
 pointer-events:none;
 
 }
-
-/* =========================================================
-   BRAND
-========================================================= */
 
 .brand-area{
 
@@ -253,10 +227,6 @@ letter-spacing:1px;
 
 }
 
-/* =========================================================
-   LIVE STATUS
-========================================================= */
-
 .live-box{
 
 display:flex;
@@ -317,10 +287,6 @@ opacity:1;
 
 }
 
-/* =========================================================
-   CARD GLOBAL
-========================================================= */
-
 .login-box,
 .profile-box,
 .info-card,
@@ -344,10 +310,6 @@ border-radius:32px;
 
 }
 
-/* =========================================================
-   LOGIN + PROFILE
-========================================================= */
-
 .login-box,
 .profile-box{
 
@@ -362,10 +324,6 @@ display:none;
 .active{
 display:block;
 }
-
-/* =========================================================
-   TYPOGRAPHY
-========================================================= */
 
 h1{
 
@@ -392,10 +350,6 @@ color:var(--soft);
 margin-bottom:26px;
 
 }
-
-/* =========================================================
-   INPUT
-========================================================= */
 
 input{
 
@@ -439,26 +393,14 @@ box-shadow:
 
 }
 
-/* =========================================================
-   BUTTON
-========================================================= */
-
 .btn{
-
 width:100%;
-
 padding:17px;
-
 border:none;
-
 border-radius:18px;
-
 cursor:pointer;
-
 font-size:15px;
-
 font-weight:800;
-
 transition:.35s;
 
 }
@@ -471,9 +413,6 @@ translateY(-2px);
 }
 
 .btn-login,
-/* =========================================
-   PREMIUM BUTTON JADWAL
-========================================= */
 
 .btn-show-jadwal{
 
@@ -641,14 +580,6 @@ font-size:18px;
 
 }
 
-.btn-login:hover,
-.btn-show-jadwal:hover{
-
-box-shadow:
-0 18px 40px rgba(37,99,235,.4);
-
-}
-
 /* =========================================================
    ALERT
 ========================================================= */
@@ -714,6 +645,8 @@ box-shadow:
 
 .info-card{
 
+animation:textGlow 2s infinite ease-in-out;
+
 position:relative;
 
 padding:28px;
@@ -731,6 +664,37 @@ url('https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/
 
 background-size:cover;
 background-position:center;
+
+color:#ffffff;
+
+text-shadow:
+0 0 5px rgba(255,255,255,.25),
+0 0 10px rgba(96,165,250,.25),
+0 0 20px rgba(59,130,246,.18);
+
+}
+@keyframes textGlow{
+
+0%{
+text-shadow:
+0 0 5px rgba(255,255,255,.2),
+0 0 10px rgba(96,165,250,.2),
+0 0 20px rgba(59,130,246,.15);
+}
+
+50%{
+text-shadow:
+0 0 10px rgba(255,255,255,.45),
+0 0 20px rgba(96,165,250,.45),
+0 0 40px rgba(59,130,246,.35);
+}
+
+100%{
+text-shadow:
+0 0 5px rgba(255,255,255,.2),
+0 0 10px rgba(96,165,250,.2),
+0 0 20px rgba(59,130,246,.15);
+}
 
 }
 
@@ -752,10 +716,6 @@ transparent 50%
 pointer-events:none;
 
 }
-
-/* =========================================================
-   INFO ROW
-========================================================= */
 
 .info-row{
 
@@ -839,10 +799,6 @@ box-shadow:
 0 0 20px rgba(239,68,68,.25);
 
 }
-
-/* =========================================================
-   WA
-========================================================= */
 
 .wa-link{
 
@@ -1460,6 +1416,287 @@ font-size:12px;
 }
 
 }
+.download-brosur{
+color:#60a5fa;
+font-weight:700;
+text-decoration:none;
+transition:.3s;
+}
+
+.download-brosur:hover{
+color:#93c5fd;
+text-shadow:0 0 12px rgba(96,165,250,.45);
+}
+/* =========================================
+   IZIN LATIHAN
+========================================= */
+
+.izin-box{
+
+margin-top:18px;
+
+padding:20px;
+
+border-radius:24px;
+
+background:
+linear-gradient(
+145deg,
+rgba(255,255,255,.04),
+rgba(255,255,255,.02)
+);
+
+border:1px solid rgba(255,255,255,.06);
+
+text-align:center;
+
+backdrop-filter:blur(10px);
+
+}
+
+.izin-text{
+
+font-size:14px;
+
+font-weight:700;
+
+color:#cbd5e1;
+
+margin-bottom:16px;
+
+line-height:1.5;
+
+}
+
+.btn-izin{
+
+display:flex;
+
+align-items:center;
+justify-content:center;
+
+width:100%;
+
+padding:16px;
+
+border-radius:18px;
+
+text-decoration:none;
+
+font-size:15px;
+
+font-weight:900;
+
+letter-spacing:.5px;
+
+color:white;
+
+background:
+linear-gradient(
+135deg,
+#16a34a,
+#22c55e
+);
+
+box-shadow:
+0 10px 25px rgba(34,197,94,.25);
+
+transition:.3s;
+
+}
+
+.btn-izin:hover{
+
+transform:
+translateY(-2px)
+scale(1.01);
+
+box-shadow:
+0 16px 35px rgba(34,197,94,.4);
+
+}
+/* =========================================
+   DOWNLOAD BROSUR BUTTON
+========================================= */
+
+.btn-download-brosur{
+
+display:flex;
+
+align-items:center;
+justify-content:center;
+
+width:100%;
+
+padding:18px;
+
+margin-bottom:22px;
+
+border-radius:22px;
+
+text-decoration:none;
+
+font-size:15px;
+
+font-weight:900;
+
+letter-spacing:.3px;
+
+color:white;
+
+background:
+linear-gradient(
+135deg,
+#2563eb,
+#3b82f6,
+#60a5fa
+);
+
+box-shadow:
+0 12px 30px rgba(37,99,235,.30);
+
+transition:.35s ease;
+
+}
+
+.btn-download-brosur:hover{
+
+transform:
+translateY(-3px)
+scale(1.01);
+
+box-shadow:
+0 18px 40px rgba(37,99,235,.45),
+0 0 35px rgba(96,165,250,.25);
+
+}
+/* =========================================
+   PERFORMANCE MODE ANDROID
+========================================= */
+
+*{
+-webkit-tap-highlight-color:transparent;
+}
+
+body{
+background:#020617 !important;
+overflow-x:hidden;
+}
+
+/* MATIKAN BLUR BERAT */
+.topbar,
+.login-box,
+.profile-box,
+.info-card,
+.kas-calendar,
+.live-box,
+.modal-jadwal,
+.modal-jadwal-content,
+.izin-box{
+
+backdrop-filter:none !important;
+
+}
+
+/* RINGANKAN SHADOW */
+.topbar,
+.login-box,
+.profile-box,
+.info-card,
+.kas-calendar{
+
+box-shadow:
+0 4px 14px rgba(0,0,0,.18) !important;
+
+}
+
+/* MATIKAN GLOW BERAT */
+.info-card{
+animation:none !important;
+text-shadow:none !important;
+}
+
+/* ALERT LEBIH RINGAN */
+.alert-danger-active{
+animation:warningSimple 2s infinite !important;
+}
+
+@keyframes warningSimple{
+0%{opacity:1;}
+50%{opacity:.75;}
+100%{opacity:1;}
+}
+
+/* BUTTON LEBIH RINGAN */
+.btn-show-jadwal::before,
+.btn-show-jadwal::after{
+display:none !important;
+}
+
+.btn-show-jadwal:hover,
+.btn-login:hover,
+.btn-download-brosur:hover,
+.btn-izin:hover{
+
+transform:none !important;
+
+box-shadow:
+0 6px 16px rgba(37,99,235,.22) !important;
+
+}
+
+/* MATIKAN ROTATE ICON */
+.btn-show-jadwal:hover i{
+transform:none !important;
+}
+
+/* RINGANKAN SESSION */
+.session-card:hover,
+.hist-item:hover,
+.kas-week:hover{
+transform:none !important;
+}
+
+/* SCROLLBAR SIMPLE */
+::-webkit-scrollbar{
+width:4px;
+}
+
+::-webkit-scrollbar-thumb{
+background:#334155;
+}
+
+/* MOBILE EXTRA OPTIMIZATION */
+@media(max-width:768px){
+
+.topbar{
+padding:18px !important;
+}
+
+.logo{
+width:68px !important;
+height:68px !important;
+}
+
+.brand-title{
+font-size:24px !important;
+}
+
+h1{
+font-size:30px !important;
+}
+
+.login-box,
+.profile-box{
+padding:20px !important;
+}
+
+.info-card,
+.kas-calendar{
+padding:20px !important;
+}
+
+}
     </style>
 </head>
 <body>
@@ -1510,11 +1747,27 @@ Masuk ke Dashboard
 
     <div id="profileSection" class="profile-box">
         <h1 id="welcomeName" style="color: #fff;">Halo!</h1>
-        <p class="subtitle" id="memberUser">@username</p>
+        <p 
+class="subtitle" 
+id="memberUser"
+style="
+color:#60a5fa;
+font-weight:700;
+cursor:pointer;
+"
+</p>
 
         <div id="alertBox" style="display:none;" class="notif-alert">
             ⚠️ Perhatian: Anda memiliki tunggakan kewajiban!
         </div>
+
+<a 
+href="https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Brosur.png"
+download="Brosur-BMI-Taekwondo.png"
+class="btn-download-brosur"
+>
+Download Brosur dan bagikan ke Sosial Media
+</a>
 
         <div class="info-card">
             <div class="info-row"><span class="label">Status kewajiban</span><span id="statusTag"></span></div>
@@ -1534,6 +1787,22 @@ Masuk ke Dashboard
     <i class="fa-solid fa-calendar-days"></i>
     <span>JADWAL LATIHAN</span>
 </button>
+
+<div class="izin-box">
+
+<div class="izin-text">
+Jika hari ini mau ijin tidak berangkat latihan
+</div>
+
+<a 
+href="https://wa.me/+62882003007515?text=Shabum%20Widya%20yang%20Cantik,%20Maaf%20hari%20ini%20anak%20saya%20ijin%20tidak%20bisa%20Hadir%20mengikuti%20latihan,%20harap%20di%20maklumi%20ya%20Shabeum"
+target="_blank"
+class="btn-izin"
+>
+KLIK IJIN
+</a>
+
+</div>
 
 <div id="modalJadwal" class="modal-jadwal">
     <div class="modal-jadwal-content">
