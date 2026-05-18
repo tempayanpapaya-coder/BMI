@@ -826,8 +826,7 @@ color:white;
             <div id="paymentStatus"></div>
         </div>
 
-        <div class="history-title">Riwayat Pembayaran</div>
-        <div id="historyContainer"></div>
+      
 
         <button class="btn" style="background:#475569; color:white; margin-top:20px;" onclick="logout()">Keluar</button>
     </div>
@@ -941,7 +940,44 @@ function tampilkanProfil(data) {
     }
     // Status Pembayaran Baru
     const paymentBox = document.getElementById("paymentStatus");
-    const pembayaran = data.pembayaran || [];
+
+let pembayaran = data.pembayaran || [];
+
+// AUTO BUAT RIWAYAT
+const mingguKey = getMingguKey();
+
+const cekRiwayat = pembayaran.find(function(p){
+    return p.key === mingguKey;
+});
+
+if (!cekRiwayat) {
+
+    pembayaran.push({
+        key: mingguKey,
+        minggu: "Minggu " + getMingguKe(),
+        nominal: 5000,
+        status:
+            data.minggu_bayar === mingguKey
+            ? "lunas"
+            : "belum"
+    });
+
+    db.collection("siswa")
+    .where("username", "==", data.username)
+    .get()
+    .then(function(snapshot){
+
+        snapshot.forEach(function(doc){
+
+            doc.ref.update({
+                pembayaran: pembayaran
+            });
+
+        });
+
+    });
+
+}
     let paymentHTML = "";
 
     const mingguSekarangFormat = now.toLocaleDateString("id-ID", {
@@ -985,24 +1021,54 @@ ${data.minggu_bayar === mingguSekarangKey
     </div>`;
     paymentBox.innerHTML = paymentHTML;
 
-    // Render Riwayat Pembayaran (Agar tidak kosong)
-    const historyContainer = document.getElementById("historyContainer");
-    if(pembayaran.length > 0) {
-        let histHTML = "";
-        pembayaran.forEach(p => {
-            histHTML += `
-            <div class="hist-item">
-                <div>
-                    <div style="font-weight:800;">${p.minggu}</div>
-                    <div style="font-size:12px; color:#94a3b8;">Rp${p.nominal.toLocaleString("id-ID")}</div>
+ // Render Riwayat Pembayaran
+const historyContainer = document.getElementById("historyContainer");
+
+if (pembayaran && pembayaran.length > 0) {
+
+    let histHTML = "";
+
+    pembayaran.forEach(function(p){
+
+        histHTML += `
+        <div class="hist-item">
+
+            <div>
+                <div style="font-weight:800;">
+                    ${p.minggu}
                 </div>
-                <div class="badge ${p.status === 'lunas' ? 'lunas' : 'belum'}">${p.status.toUpperCase()}</div>
-            </div>`;
-        });
-        historyContainer.innerHTML = histHTML;
-    } else {
-        historyContainer.innerHTML = "<p style='color:#94a3b8; font-size:14px;'>Belum ada riwayat pembayaran.</p>";
-    }
+
+                <div style="font-size:12px; color:#94a3b8;">
+                    Rp${Number(p.nominal).toLocaleString("id-ID")}
+                </div>
+            </div>
+
+            <div class="badge ${p.status === 'lunas' ? 'lunas' : 'belum'}">
+                ${String(p.status).toUpperCase()}
+            </div>
+
+        </div>`;
+    });
+
+    historyContainer.innerHTML = histHTML;
+
+} else {
+
+    historyContainer.innerHTML =
+    "<p style='color:#94a3b8;font-size:14px;'>Belum ada riwayat pembayaran.</p>";
+
+}
+}
+function resetPembayaranBulanan(data) {
+    const now = new Date();
+
+    const bulanSekarang = now.getMonth() + 1;
+    const tahunSekarang = now.getFullYear();
+
+    return (
+        data.last_reset_bulan !== bulanSekarang ||
+        data.last_reset_tahun !== tahunSekarang
+    );
 }
 
 // --- JADWAL SYSTEM ---
