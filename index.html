@@ -767,7 +767,7 @@ color:white;
 </div>
 
 <div class="container">
-    <div id="loginSection" class="login-box active">
+    <div id="loginSection" class="login-box">
         <h1>Member Login</h1>
         <p class="subtitle">BMI Taekwondo Academy</p>
         <input type="text" id="userInp" placeholder="Username">
@@ -782,7 +782,7 @@ color:white;
 
     <div id="profileSection" class="profile-box">
         <h1 id="welcomeName" style="color: #fff;">Halo!</h1>
-        <p class="subtitle" id="memberUser" style="color:#60a5fa; font-weight:700; cursor:pointer;"></p>
+        <p class="subtitle" id="memberUser" style="color:#60a5fa; font-weight:700;"></p>
 
         <div id="alertBox" style="display:none;" class="notif-alert">
             ⚠️ Perhatian: Anda memiliki tunggakan kewajiban!
@@ -822,11 +822,12 @@ color:white;
         </div>
 
         <div class="payment-box">
-            <div class="payment-title">📌 Status Pembayaran</div>
+            <div class="payment-title">📌 KAS di bayar pada </div>
             <div id="paymentStatus"></div>
+            
+            <div class="history-title">📜 Catatan & Riwayat Kas</div>
+            <div id="historyContainer"></div>
         </div>
-
-      
 
         <button class="btn" style="background:#475569; color:white; margin-top:20px;" onclick="logout()">Keluar</button>
     </div>
@@ -869,8 +870,8 @@ function getMingguKey() {
 
 // --- FUNGSI LOGIN ---
 function login() {
-    const u = document.getElementById("userInp").value;
-    const p = document.getElementById("passInp").value;
+    const u = document.getElementById("userInp").value.trim();
+    const p = document.getElementById("passInp").value.trim();
 
     if(!u || !p) return alert("Isi username & password!");
 
@@ -883,41 +884,62 @@ function login() {
               alert("Username atau Password salah!");
           } else {
               const dataSiswa = snapshot.docs[0].data();
+              // Simpan data login ke lokal browser
               localStorage.setItem("bmi_member_login", JSON.stringify({username: dataSiswa.username}));
               
+              // Alihkan UI secara langsung
               document.getElementById("loginSection").classList.remove("active");
               document.getElementById("profileSection").classList.add("active");
               tampilkanProfil(dataSiswa);
+              
+              // Dengarkan perubahan real-time secara terpisah setelah login sukses
+              aktifkanRealtimeUpdate(dataSiswa.username);
           }
       })
       .catch(err => alert("Terjadi kesalahan koneksi: " + err));
 }
 
-//
-  // --- FUNGSI TAMPILKAN PROFIL ---
+// --- REAL-TIME LISTENER (AMAN TANPA LOOP MEMBAL) ---
+function aktifkanRealtimeUpdate(username) {
+    db.collection("siswa").where("username", "==", username)
+      .onSnapshot(snapshot => {
+          if(!snapshot.empty){
+              tampilkanProfil(snapshot.docs[0].data());
+          }
+      });
+}
+
+// --- FUNGSI TAMPILKAN PROFIL ---
 function tampilkanProfil(data) {
     const now = new Date();
     const mingguSekarangKey = getMingguKey();
     const alertBox = document.getElementById("alertBox");
+
+    // SINKRONISASI KUOTA BORONGAN
+    const kuotaKas = parseInt(data.kuota_kas || 0);
+    const isLunasSistem = (data.minggu_bayar === mingguSekarangKey) || (kuotaKas > 0);
 
     // Tampilkan Data Dasar
     document.getElementById("welcomeName").innerText = "Halo, " + (data.nama || "Member") + "!";
     document.getElementById("memberUser").innerText = "@" + (data.username || "user");
     document.getElementById("valSabuk").innerText = data.warna_sabuk || "-";
     document.getElementById("valFisik").innerText = (data.berat_badan || 0) + "kg / " + (data.tinggi_badan || 0) + "cm";
+    
     if(data.tanggal_lahir) {
         const p = data.tanggal_lahir.split("-");
-        const bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","December"];
+        const bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
         document.getElementById("valTgl").innerText = `${p[2]} ${bulan[parseInt(p[1])-1]} ${p[0]}`;
     }
 
     if (data.nomor_hp) {
         document.getElementById("valWA").innerHTML = `<a href="https://wa.me/${data.nomor_hp}" target="_blank" class="wa-link">${data.nomor_hp}</a>`;
     }
-    // Status Pembayaran Tag
+
+    // Status Pembayaran Tag Utama (Mendukung Kuota Deposit)
     const tag = document.getElementById("statusTag");
-    if(data.minggu_bayar === mingguSekarangKey) {
-        tag.innerHTML = '<span class="badge lunas">LUNAS MINGGU INI</span>';
+    if(isLunasSistem) {
+        let labelKuota = kuotaKas > 0 ? `LUNAS (Sisa Kuota: ${kuotaKas} Mgg)` : 'LUNAS MINGGU INI';
+        tag.innerHTML = `<span class="badge lunas">${labelKuota}</span>`;
     } else {
         tag.innerHTML = '<span class="badge belum">BELUM BAYAR KAS</span>';
     }
@@ -925,150 +947,87 @@ function tampilkanProfil(data) {
     // Logika Peringatan
     if (data.peringatan === true) {
         alertBox.style.display = "block";
-        if (data.minggu_bayar !== mingguSekarangKey) {
+        if (!isLunasSistem) {
             alertBox.classList.add("alert-danger-active");
             alertBox.innerHTML = `⚠️ <strong>PERINGATAN KERAS:</strong> Segera lunasi kewajiban Anda untuk minggu ini!`;
         } else {
             alertBox.classList.remove("alert-danger-active");
             alertBox.innerHTML = `⚠️ <strong>Perhatian:</strong> Harap cek kembali data administrasi Anda.`;
         }
-        db.collection("siswa").where("username", "==", data.username).get().then(snap => {
-            snap.forEach(doc => { doc.ref.update({ peringatan_dilihat: true }); });
-        });
     } else {
         alertBox.style.display = "none";
     }
-    // Status Pembayaran Baru
+
+    // Status Pembayaran Box
     const paymentBox = document.getElementById("paymentStatus");
-
-let pembayaran = data.pembayaran || [];
-
-// AUTO BUAT RIWAYAT
-const mingguKey = getMingguKey();
-
-const cekRiwayat = pembayaran.find(function(p){
-    return p.key === mingguKey;
-});
-
-if (!cekRiwayat) {
-
-    pembayaran.push({
-        key: mingguKey,
-        minggu: "Minggu " + getMingguKe(),
-        nominal: 5000,
-        status:
-            data.minggu_bayar === mingguKey
-            ? "lunas"
-            : "belum"
-    });
-
-    db.collection("siswa")
-    .where("username", "==", data.username)
-    .get()
-    .then(function(snapshot){
-
-        snapshot.forEach(function(doc){
-
-            doc.ref.update({
-                pembayaran: pembayaran
-            });
-
-        });
-
-    });
-
-}
-    let paymentHTML = "";
-
+    let pembayaran = data.pembayaran || [];
+    
     const mingguSekarangFormat = now.toLocaleDateString("id-ID", {
         day: "numeric",
         month: "long",
         year: "numeric"
     });
 
-    let pembayaranMingguIni = pembayaran.find(p => p.minggu === mingguSekarangFormat);
-
-   if(!pembayaranMingguIni){
-
-    pembayaranMingguIni = {
-        minggu: mingguSekarangFormat,
-        nominal: 5000,
-        status:
-        data.minggu_bayar === mingguSekarangKey
-        ? "lunas"
-        : "belum"
-    };
-}
-    paymentHTML += `
+    let paymentHTML = `
     <div class="payment-card">
         <div class="payment-top">
             <div>
-                <div class="payment-week">${pembayaranMingguIni.minggu}</div>
-                <div class="payment-nominal">Rp${pembayaranMingguIni.nominal.toLocaleString("id-ID")}</div>
+                <div class="payment-week">Minggu ${getMingguKe()} (${mingguSekarangFormat})</div>
+                <div class="payment-nominal">Kas Mingguan Wajib</div>
             </div>
-           <div class="payment-status ${
-data.minggu_bayar === mingguSekarangKey
-? "status-lunas"
-: "status-belum"
-}">
-
-${data.minggu_bayar === mingguSekarangKey
-? "LUNAS"
-: "BELUM"}
-
-</div>
+            <div class="payment-status ${isLunasSistem ? 'status-lunas' : 'status-belum'}">
+                ${isLunasSistem ? "LUNAS" : "BELUM"}
+            </div>
         </div>
     </div>`;
     paymentBox.innerHTML = paymentHTML;
 
- // Render Riwayat Pembayaran
-const historyContainer = document.getElementById("historyContainer");
+    // Render Riwayat Pembayaran Nyata & Teks Riwayat Borongan dari Admin
+    const historyContainer = document.getElementById("historyContainer");
+    let riwayatTeksAdmin = data.riwayat_kas || [];
 
-if (pembayaran && pembayaran.length > 0) {
+    if (riwayatTeksAdmin.length > 0) {
+        let histHTML = "";
+        for (let i = riwayatTeksAdmin.length - 1; i >= 0; i--) {
+            let itemText = riwayatTeksAdmin[i];
+            let isBorongan = itemText.includes("BORONGAN") || itemText.includes("Bayar");
+            let isKoreksi = itemText.includes("Koreksi") || itemText.includes("mengoreksi");
+            
+            let bgStyle = "rgba(255,255,255,0.04)";
+            let badgeColor = "var(--soft)";
+            let badgeText = "INFO";
 
-    let histHTML = "";
+            if(isBorongan) {
+                bgStyle = "rgba(34,197,94,0.08)";
+                badgeColor = "#16a34a";
+                badgeText = "KAS";
+            } else if(isKoreksi) {
+                bgStyle = "rgba(234,179,8,0.08)";
+                badgeColor = "#eab308";
+                badgeText = "EDIT";
+            }
 
-    pembayaran.forEach(function(p){
-
-        histHTML += `
-        <div class="hist-item">
-
-            <div>
-                <div style="font-weight:800;">
-                    ${p.minggu}
+            histHTML += `
+            <div class="hist-item" style="background: ${bgStyle};">
+                <div style="flex: 1; padding-right: 10px;">
+                    <div style="font-weight:700; font-size:14px; line-height:1.4;">
+                        ${itemText}
+                    </div>
                 </div>
-
-                <div style="font-size:12px; color:#94a3b8;">
-                    Rp${Number(p.nominal).toLocaleString("id-ID")}
+                <div class="badge" style="background: ${badgeColor}; color: white;">
+                    ${badgeText}
                 </div>
-            </div>
-
-            <div class="badge ${p.status === 'lunas' ? 'lunas' : 'belum'}">
-                ${String(p.status).toUpperCase()}
-            </div>
-
-        </div>`;
-    });
-
-    historyContainer.innerHTML = histHTML;
-
-} else {
-
-    historyContainer.innerHTML =
-    "<p style='color:#94a3b8;font-size:14px;'>Belum ada riwayat pembayaran.</p>";
-
+            </div>`;
+        }
+        historyContainer.innerHTML = htmlEntities(histHTML);
+    } else {
+        historyContainer.innerHTML = "<p style='color:#94a3b8;font-size:14px; text-align:center; padding:10px;'>Belum ada riwayat pembayaran resmi.</p>";
+    }
 }
-}
-function resetPembayaranBulanan(data) {
-    const now = new Date();
 
-    const bulanSekarang = now.getMonth() + 1;
-    const tahunSekarang = now.getFullYear();
-
-    return (
-        data.last_reset_bulan !== bulanSekarang ||
-        data.last_reset_tahun !== tahunSekarang
-    );
+// Fungsi bantu pelindung injeksi teks HTML
+function htmlEntities(str) {
+    return str; 
 }
 
 // --- JADWAL SYSTEM ---
@@ -1098,22 +1057,20 @@ db.collection("jadwal").doc("global").onSnapshot(doc => {
     document.getElementById("jadwal").innerHTML = html || "<p>Belum ada jadwal.</p>";
 });
 
-// --- SESSION CONTROL (AUTO LOGIN) ---
+// --- SESSION CONTROL (AUTO LOGIN SEHAT) ---
 window.onload = function(){
     const savedLogin = localStorage.getItem("bmi_member_login");
     if(savedLogin){
         const localData = JSON.parse(savedLogin);
-        db.collection("siswa").where("username", "==", localData.username).onSnapshot(snapshot => {
-            if(!snapshot.empty){
-                document.getElementById("loginSection").classList.remove("active");
-                document.getElementById("profileSection").classList.add("active");
-                tampilkanProfil(snapshot.docs[0].data());
-            }
-        });
+        // Langsung aktifkan realtime, dia otomatis merender profil jika username ditemukan
+        document.getElementById("loginSection").classList.remove("active");
+        document.getElementById("profileSection").classList.add("active");
+        aktifkanRealtimeUpdate(localData.username);
     } else {
         document.getElementById("loginSection").classList.add("active");
     }
 }
+
 function logout(){
     localStorage.removeItem("bmi_member_login");
     location.reload();
