@@ -1556,6 +1556,9 @@ text-shadow:
     </style>
 </head>
 <body>
+  
+  <audio id="coachAudio" src="https://github.com/tempayanpapaya-coder/Komponen/raw/refs/heads/main/sang_penakluk.mp3" loop></audio>
+
 <div class="topbar">
 
     <div class="topbar-overlay"></div>
@@ -1722,6 +1725,36 @@ text-shadow:
     <div class="footer-title">BMI TAEKWONDO ACADEMY</div>
     <div class="footer-sub">Discipline • Honor • Excellence</div>
     <div class="footer-copy">© 2026 All Rights Reserved</div>
+</div>
+
+<!-- ========================= -->
+<!-- COACH MESSAGE MODAL -->
+<!-- ========================= -->
+
+<div id="coachModal" class="coach-modal">
+
+    <div class="coach-canvas">
+
+        <div class="coach-glow"></div>
+
+        <span class="coach-close" onclick="toggleCoachMessage(false)">
+            &times;
+        </span>
+
+        <div class="coach-title">
+            PESAN DARI PELATIH
+        </div>
+
+        <div class="coach-line"></div>
+
+        <div class="coach-message">
+            Akan segera hadir...
+            <br><br>
+            namtinya pesan ini berisi tentang catatan kemampuan atlit sebagai evaluasi.
+        </div>
+
+    </div>
+
 </div>
 
 <script>
@@ -2020,38 +2053,23 @@ window.onclick = function(event) {
     if (event.target == document.getElementById("modalRegister")) toggleRegister(false);
 }
 function toggleCoachMessage(show){
-    document.getElementById("coachModal").style.display =
-    show ? "flex" : "none";
+    const modal = document.getElementById("coachModal");
+    const audio = document.getElementById("coachAudio");
+    
+    if (show) {
+        modal.style.display = "flex";
+        // Memutar lagu dari awal saat modal dibuka
+        audio.currentTime = 0; 
+        audio.play().catch(error => {
+            console.log("Pemutaran audio diblokir oleh browser:", error);
+        });
+    } else {
+        modal.style.display = "none";
+        // Menghentikan lagu saat modal ditutup
+        audio.pause(); 
+    }
 }
+
 </script>
-<!-- ========================= -->
-<!-- COACH MESSAGE MODAL -->
-<!-- ========================= -->
-
-<div id="coachModal" class="coach-modal">
-
-    <div class="coach-canvas">
-
-        <div class="coach-glow"></div>
-
-        <span class="coach-close" onclick="toggleCoachMessage(false)">
-            &times;
-        </span>
-
-        <div class="coach-title">
-            PESAN DARI PELATIH
-        </div>
-
-        <div class="coach-line"></div>
-
-        <div class="coach-message">
-            Akan segera hadir...
-            <br><br>
-            Tingkatkan terus pembayaran agar aplikasi ini berkembang.
-        </div>
-
-    </div>
-
-</div>
 </body>
 </html>
