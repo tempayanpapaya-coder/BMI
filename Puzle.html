@@ -278,14 +278,12 @@ renderPuzzle();
 checkDailyReset();
 
 
-// --- 4. SISTEM DATABASE LEADERBOARD ---
+// --- 4. SISTEM DATABASE LEADERBOARD (VERSI INSTAN TANPA INDEKS) ---
 
-// Fungsi Menyimpan Skor (Diperbaiki agar akun baru tanpa data 'siswa' tetap tersimpan)
 function simpanSkorKeDatabase(langkah) {
     if(!currentUser) return; 
 
-    const currentMonthKey = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0'); // Contoh: "2026-05"
-    const docRef = db.collection("puzzle_leaderboard").doc(`${currentUser}_${currentMonthKey}`);
+    const docRef = db.collection("puzzle_leaderboard").doc(currentUser);
     
     db.collection("siswa").where("username", "==", currentUser).get().then(snapshot => {
         let namaPemain = currentUser; 
@@ -299,28 +297,59 @@ function simpanSkorKeDatabase(langkah) {
                     username: currentUser,
                     nama: namaPemain,
                     best_score: langkah,
-                    bulan: currentMonthKey, // Menyimpan penanda bulan aktif
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 }).then(() => {
-                    console.log("Rekor baru berhasil dicatat untuk bulan ini!");
-                }).catch(err => {
-                    console.error("Gagal menyimpan ke database: ", err);
+                    console.log("Rekor baru berhasil dicatat!");
                 });
             }
         }).catch(err => {
-            // Jika dokumen gagal diakses (misal karena belum ada), paksa tulis data baru
+            // Fallback jika dokumen kosong/error agar akun lain tetap masuk datanya
             docRef.set({
                 username: currentUser,
                 nama: namaPemain,
                 best_score: langkah,
-                bulan: currentMonthKey,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
         });
-    }).catch(err => {
-        console.log("Gagal terhubung ke data siswa, menggunakan username bawaan.");
     });
 }
+
+// Ambil data langsung urut skor terbaik, batasi hanya 3 ranking (Top 3)
+db.collection("puzzle_leaderboard")
+  .orderBy("best_score", "asc") 
+  .limit(3) 
+  .onSnapshot((querySnapshot) => {
+      const listContainer = document.getElementById("leaderboardList");
+      
+      if(querySnapshot.empty) {
+          listContainer.innerHTML = "<div style='text-align:center; color:#888; font-size:14px;'>Belum ada juara. Jadilah yang pertama!</div>";
+          return;
+      }
+
+      let html = "";
+      let rank = 1;
+      querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          let rankClass = `rank-${rank}`; 
+          let rankTrophy = rank === 1 ? '🥇' : (rank === 2 ? '🥈' : '🥉');
+          
+          let isMe = data.username === currentUser ? " (Anda)" : "";
+          
+          html += `
+          <div class="rank-item ${rankClass}">
+              <div class="rank-player">
+                  <span class="rank-num">${rankTrophy}</span>
+                  <span style="color: ${isMe ? '#ffd36b' : '#fff'}">${data.nama}${isMe}</span>
+              </div>
+              <div class="rank-score">${data.best_score} <span style="font-size:11px; color:#888">Langkah</span></div>
+          </div>`;
+          rank++;
+      });
+      listContainer.innerHTML = html;
+}, (error) => {
+    console.error("Error klasemen: ", error);
+});
+
 
 // Real-time Listener Leaderboard (Dibatasi TOP 3 & Otomatis Terfilter Berdasarkan Bulan Berjalan)
 const activeMonth = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0');
