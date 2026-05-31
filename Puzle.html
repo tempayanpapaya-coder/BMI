@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puzzle 3x3 - Leaderboard</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+
+body {
+    background: #0f172a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    position: relative;
+    overflow-x: hidden;
+    padding: 20px;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+    filter: blur(25px); opacity: 0.25; z-index: -1;
+    transition: opacity 1s ease;
+}
+
+.container { text-align:center; width: 100%; max-width: 400px; margin-bottom: 20px;}
+h1 { margin-bottom:15px; color: #22c55e; }
+.info { margin-bottom:15px; font-size:18px; font-weight: bold;}
+
+button {
+    padding:12px 20px; border:none; border-radius:10px; cursor:pointer;
+    background: linear-gradient(135deg, #22c55e, #166534);
+    color:white; font-weight:bold; margin-bottom:15px; width: 100%;
+    box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3); transition: 0.3s;
+}
+button:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(34, 197, 94, 0.5); }
+
+.puzzle {
+    display:grid;
+    grid-template-columns:repeat(3, min(26vw, 110px));
+    grid-template-rows:repeat(3, min(26vw, 110px));
+    gap:12px; justify-content:center; padding:20px; border-radius:25px;
+    background:rgba(255,255,255,0.05); backdrop-filter:blur(10px);
+    box-shadow: 0 25px 50px rgba(0,0,0,.5), inset 0 1px 1px rgba(255,255,255,.15);
+    margin: 0 auto;
+}
+
+.tile {
+    position:relative; background:linear-gradient(145deg, #4f8cff, #1e40af);
+    border-radius:20px; display:flex; justify-content:center; align-items:center;
+    font-size: clamp(24px, 8vw, 36px); font-weight:900; color:white; cursor:pointer;
+    box-shadow: 0 15px 25px rgba(0,0,0,.45), inset 0 2px 2px rgba(255,255,255,.35), inset 0 -4px 8px rgba(0,0,0,.25);
+    transition:all .2s ease;
+}
+
+.tile::before {
+    content:''; position:absolute; top:8px; left:10px; right:10px; height:35%; border-radius:15px;
+    background:linear-gradient(rgba(255,255,255,.45), rgba(255,255,255,0)); pointer-events:none;
+}
+
+.tile:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 20px 30px rgba(59,130,246,.45), 0 10px 20px rgba(0,0,0,.5); }
+.tile:active { transform: translateY(3px) scale(.98); box-shadow: inset 0 5px 10px rgba(0,0,0,.4); }
+.empty { background:rgba(255,255,255,.05); border:2px dashed rgba(255,255,255,.15); box-shadow:none; }
+.empty::before { display:none; }
+
+.failed { filter:grayscale(1); animation:shakeFail .4s; }
+@keyframes shakeFail { 0%{transform:translateX(0);} 20%{transform:translateX(-10px);} 40%{transform:translateX(10px);} 60%{transform:translateX(-10px);} 80%{transform:translateX(10px);} 100%{transform:translateX(0);} }
+
+/* EFEK MENANG */
+.won { border: 2px solid #22c55e; box-shadow: 0 0 40px rgba(34, 197, 94, 0.5); animation: pulseWin 1.5s infinite; }
+.won .tile:not(.empty) { background: linear-gradient(145deg, #22c55e, #166534); box-shadow: 0 15px 25px rgba(0,0,0,.45), inset 0 2px 2px rgba(255,255,255,.35); }
+@keyframes pulseWin { 0%, 100% { box-shadow: 0 0 30px rgba(34, 197, 94, 0.5); } 50% { box-shadow: 0 0 60px rgba(34, 197, 94, 0.9); } }
+
+#message { margin-top: 15px; font-weight: bold; min-height: 24px; color: #fbbf24;}
+
+/* LEADERBOARD STYLES */
+.leaderboard-box {
+    width: 100%; max-width: 400px; margin-top: 25px;
+    background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 215, 120, 0.2);
+    border-radius: 20px; padding: 20px; backdrop-filter: blur(10px);
+}
+.leaderboard-title {
+    text-align: center; color: #ffd36b; font-size: 18px; font-weight: 900; margin-bottom: 15px; letter-spacing: 1px;
+}
+.rank-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 15px; margin-bottom: 8px; border-radius: 12px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05);
+}
+.rank-1 { background: linear-gradient(90deg, rgba(212,163,89,0.3), rgba(212,163,89,0.1)); border-color: rgba(212,163,89,0.4); }
+.rank-2 { background: linear-gradient(90deg, rgba(192,192,192,0.2), transparent); border-color: rgba(192,192,192,0.3); }
+.rank-3 { background: linear-gradient(90deg, rgba(205,127,50,0.2), transparent); border-color: rgba(205,127,50,0.3); }
+
+.rank-player { display: flex; align-items: center; gap: 10px; font-weight: bold; }
+.rank-num { font-size: 14px; color: #aaa; width: 20px; }
+.rank-1 .rank-num { color: #ffd36b; font-size: 18px; }
+.rank-score { font-weight: 900; color: #22c55e; }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🧩 BMI Puzzle</h1>
+    <div class="info">Langkah: <span id="moves">0</span> &nbsp;|&nbsp; Kesempatan: <span id="lives">3</span>/3</div>
+
+    <button onclick="startGame()">🔄 Acak & Mulai Permainan
+        <div id="resetInfo" style="font-size:11px; font-weight:normal; margin-top:4px;"></div>
+    </button>
+
+    <div class="puzzle" id="puzzle"></div>
+    <div id="message">👇 Klik 'Acak & Mulai Permainan'</div>
+</div>
+
+<div class="leaderboard-box">
+    <div class="leaderboard-title">🏆 KLASEMEN GLOBAL (TOP 5)</div>
+    <div id="leaderboardList">
+        <div style="text-align:center; color:#888; font-size:14px;">Memuat data klasemen...</div>
+    </div>
+</div>
+
+<script>
+// --- 1. KONFIGURASI FIREBASE ---
+// Menggunakan config yang sama persis dengan web member Anda
+const firebaseConfig = {
+    apiKey: "AIzaSyATIQKEoacfqd_P5mBn915gzwbsLQE-va8",
+    authDomain: "spp-unisri-taekwondo.firebaseapp.com",
+    projectId: "spp-unisri-taekwondo",
+    storageBucket: "spp-unisri-taekwondo.firebasestorage.app",
+    messagingSenderId: "888126318699",
+    appId: "1:888126318699:web:6e1ef3d5a49908c2b5692e"
+};
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+const db = firebase.firestore();
+
+// --- 2. IDENTIFIKASI PEMAIN DARI LOCALSTORAGE ---
+let currentUser = null;
+const savedLogin = localStorage.getItem("bmi_member_login");
+if(savedLogin) {
+    currentUser = JSON.parse(savedLogin).username;
+} else {
+    alert("Perhatian: Anda belum login di Member Area. Skor Anda tidak akan tersimpan di klasemen.");
+}
+
+// --- 3. LOGIKA GAME ---
+let gameOver = true;
+const MAX_LIVES = 3;
+let lives = MAX_LIVES;
+const puzzle = document.getElementById("puzzle");
+const movesText = document.getElementById("moves");
+const message = document.getElementById("message");
+
+let moves = 0;
+let tiles = [1,2,3, 4,5,6, 7,8,0];
+
+function renderPuzzle(){
+    puzzle.innerHTML = "";
+    tiles.forEach((value,index)=>{
+        const tile = document.createElement("div");
+        if(value === 0){
+            tile.className = "tile empty";
+        }else{
+            tile.className = "tile";
+            tile.textContent = value;
+            tile.onclick = ()=>moveTile(index);
+        }
+        puzzle.appendChild(tile);
+    });
+}
+
+function updateResetInfo(){
+    const now = new Date(); const tomorrow = new Date(); tomorrow.setHours(24,0,0,0);
+    const diff = tomorrow - now;
+    document.getElementById('resetInfo').innerHTML = 'Reset dalam ' + Math.floor(diff/3600000) + 'j ' + Math.floor((diff%3600000)/60000) + 'm';
+}
+setInterval(updateResetInfo, 60000); updateResetInfo();
+
+function moveTile(index){
+    if(gameOver) return;
+    const empty = tiles.indexOf(0);
+    const rowTile = Math.floor(index/3); const colTile = index%3;
+    const rowEmpty = Math.floor(empty/3); const colEmpty = empty%3;
+    
+    if(Math.abs(rowTile-rowEmpty) + Math.abs(colTile-colEmpty) === 1){
+        [tiles[index],tiles[empty]] = [tiles[empty],tiles[index]];
+        moves++;
+        movesText.textContent = moves;
+        if(moves >= 51){ loseGame(); return; }
+        renderPuzzle();
+        checkWin();
+    }
+}
+
+function checkWin(){
+    const win = [1,2,3,4,5,6,7,8,0];
+    if(JSON.stringify(tiles) === JSON.stringify(win)){
+        gameOver = true;
+        document.querySelector(".puzzle").classList.add("won");
+
+        if(moves >= 51){
+            kurangiNyawa();
+            message.innerHTML = "Selesai, tapi terlalu banyak langkah!";
+            setTimeout(() => alert('Anda menang, tapi menggunakan ' + moves + ' langkah (Maks 50). Kesempatan harian Anda berkurang 1.'), 300);
+        } else {
+            message.innerHTML = "🏆 LUAR BIASA! Selesai dalam " + moves + " langkah!";
+            simpanSkorKeDatabase(moves); // PANGGIL FUNGSI SIMPAN SKOR
+            setTimeout(() => alert('🎉 SELAMAT! Anda memecahkan puzzle dengan ' + moves + ' langkah! Cek klasemen di bawah! 🏆'), 300);
+        }
+    }
+}
+
+function kurangiNyawa(){
+    lives--;
+    localStorage.setItem('lives', lives);
+    document.getElementById('lives').textContent = lives;
+}
+
+function loseGame(){
+    document.querySelector(".puzzle").classList.add("failed");
+    gameOver = true;
+    kurangiNyawa();
+    message.innerHTML = "💀 Kesempatan gagal! Maksimal 50 langkah.";
+    if(lives <= 0) message.innerHTML = "🚫 Kesempatan hari ini habis. Kembali besok.";
+}
+
+function shufflePuzzle(){
+    moves = 0; movesText.textContent = 0;
+    for(let i=0; i<300; i++){
+        const empty = tiles.indexOf(0);
+        const row = Math.floor(empty/3); const col = empty%3;
+        let p = [];
+        if(row>0) p.push(empty-3); if(row<2) p.push(empty+3);
+        if(col>0) p.push(empty-1); if(col<2) p.push(empty+1);
+        const rand = p[Math.floor(Math.random()*p.length)];
+        [tiles[rand],tiles[empty]] = [tiles[empty],tiles[rand]];
+    }
+    renderPuzzle();
+}
+
+function startGame(){
+    document.querySelector(".puzzle").classList.remove("failed", "won"); 
+    if(lives <= 0){ alert("Kesempatan hari ini habis."); return; }
+    gameOver = false;
+    message.innerHTML = "🔥 Ayo pecahkan rekor!";
+    shufflePuzzle();
+}
+
+function checkDailyReset(){
+    const today = new Date().toISOString().split('T')[0];
+    if(localStorage.getItem('lastDate') !== today){
+        localStorage.setItem('lastDate', today);
+        localStorage.setItem('lives', MAX_LIVES);
+    }
+    lives = parseInt(localStorage.getItem('lives')) || MAX_LIVES;
+    document.getElementById('lives').textContent = lives;
+}
+
+// Inisialisasi awal
+renderPuzzle();
+checkDailyReset();
+
+// --- 4. SISTEM DATABASE LEADERBOARD ---
+
+// Fungsi untuk menyimpan rekor baru jika lebih baik dari sebelumnya
+function simpanSkorKeDatabase(langkah) {
+    if(!currentUser) return; // Jika tidak login, tidak disimpan
+
+    const docRef = db.collection("puzzle_leaderboard").doc(currentUser);
+    
+    // Pertama, ambil data user dari collection 'siswa' untuk mendapatkan nama aslinya
+    db.collection("siswa").where("username", "==", currentUser).get().then(snapshot => {
+        let namaPemain = currentUser; // default jika nama tidak ditemukan
+        if(!snapshot.empty) {
+            namaPemain = snapshot.docs[0].data().nama || currentUser;
+        }
+
+        // Cek apakah pemain sudah punya rekor di leaderboard
+        docRef.get().then(doc => {
+            if (!doc.exists || langkah < doc.data().best_score) {
+                // Simpan/Update jika belum ada rekor ATAU rekor baru lebih sedikit langkahnya
+                docRef.set({
+                    username: currentUser,
+                    nama: namaPemain,
+                    best_score: langkah,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => {
+                    console.log("Rekor baru berhasil dicatat!");
+                });
+            }
+        });
+    });
+}
+
+// Fungsi Real-time Listener untuk menampilkan Top 5
+db.collection("puzzle_leaderboard")
+  .orderBy("best_score", "asc") // Urutkan dari langkah paling sedikit
+  .limit(5) // Ambil hanya Top 5
+  .onSnapshot((querySnapshot) => {
+      const listContainer = document.getElementById("leaderboardList");
+      
+      if(querySnapshot.empty) {
+          listContainer.innerHTML = "<div style='text-align:center; color:#888; font-size:14px;'>Belum ada juara. Jadilah yang pertama!</div>";
+          return;
+      }
+
+      let html = "";
+      let rank = 1;
+      querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          let rankClass = rank <= 3 ? `rank-${rank}` : ''; // Gaya khusus untuk Top 3
+          let rankTrophy = rank === 1 ? '🥇' : (rank === 2 ? '🥈' : (rank === 3 ? '🥉' : rank));
+          
+          let isMe = data.username === currentUser ? " (Anda)" : "";
+          
+          html += `
+          <div class="rank-item ${rankClass}">
+              <div class="rank-player">
+                  <span class="rank-num">${rankTrophy}</span>
+                  <span style="color: ${isMe ? '#ffd36b' : '#fff'}">${data.nama}${isMe}</span>
+              </div>
+              <div class="rank-score">${data.best_score} <span style="font-size:11px; color:#888">Langkah</span></div>
+          </div>`;
+          rank++;
+      });
+      listContainer.innerHTML = html;
+});
+
+// --- EFEK BACKGROUND GAMBAR ---
+const originalUrl = "https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Footer.png";
+const img = new Image();
+img.crossOrigin = "anonymous";
+img.onload = function(){
+    const canvas = document.createElement("canvas");
+    const scale = 0.2; 
+    canvas.width = img.width * scale; canvas.height = img.height * scale;
+    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+    const compressed = canvas.toDataURL("image/jpeg", 0.3);
+    const style = document.createElement('style');
+    style.innerHTML = `body::before { background-image: url('${compressed}'); }`;
+    document.head.appendChild(style);
+};
+img.src = originalUrl;
+
+</script>
+</body>
+</html>
