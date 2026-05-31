@@ -13,6 +13,101 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 
     <style>
+    /* ========================= */
+/* GAME POPUP SYSTEM */
+/* ========================= */
+
+.btn-game-float {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: linear-gradient(135deg, #22c55e, #166534);
+    color: white;
+    padding: 14px 20px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 900;
+    font-family: 'Quicksand', sans-serif;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4), 0 0 20px rgba(34, 197, 94, 0.2);
+    cursor: pointer;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.3s;
+    animation: bounceGame 2.5s infinite;
+}
+
+.btn-game-float:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 35px rgba(34, 197, 94, 0.6);
+}
+
+@keyframes bounceGame {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+.modal-game {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(12px);
+    z-index: 999999;
+    align-items: center;
+    justify-content: center;
+    animation: fade 0.3s ease;
+}
+
+.modal-game-content {
+    width: 95%; /* Diperlebar dari 90% menjadi 95% */
+    max-width: 450px; /* Batas maksimal diperlebar */
+    height: 92vh; /* Ketinggian ditambah dari 80vh menjadi 92vh */
+    background: #0f172a;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+}
+
+
+.close-game {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: 0.3s;
+}
+
+.close-game:hover {
+    background: #ef4444;
+    transform: rotate(90deg);
+}
+
+iframe.game-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+}
+
 :root{
 /* JAWA CLASSIC PREMIUM PALETTE */
 --bg: #0c0804;
@@ -1591,21 +1686,27 @@ text-shadow:
             <div class="header-stats">
                 <div class="stat-card">
                     <div class="stat-number">MFT</div>
-                    <div class="stat-label">akan hadir</div>
+                    <div class="stat-label">Level akan hadir...</div>
                 </div>
 
                 <div class="stat-card">
                     <div class="stat-number">SPEED</div>
-                    <div class="stat-label">akan hadir</div>
+                    <div class="stat-label">Level akan hadir...</div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-number">KEKUATAN</div>
-                    <div class="stat-label">akan hadir</div>
+                    <div class="stat-number">POWER</div>
+                    <div class="stat-label">Level akan hadir...</div>
+                </div>
+                 <div class="stat-card">
+                    <div class="stat-number">SMART</div>
+                    <div class="stat-label">Level akan hadir...</div>
                 </div>
             </div>
         </div>
     </div>
+
+
 
     <div class="header-right">
         <div class="live-box">
@@ -1618,6 +1719,16 @@ text-shadow:
 </button>
     </div>
 
+</div>
+  <button class="btn-game-float" onclick="toggleGame(true)">
+    🎮 Main Puzzle
+</button>
+
+<div id="modalGame" class="modal-game">
+    <div class="modal-game-content">
+        <div class="close-game" onclick="toggleGame(false)">&times;</div>
+        <iframe src="https://tempayanpapaya-coder.github.io/BMI/Puzle.html" class="game-frame"></iframe>
+    </div>
 </div>
 
 <div class="container">
@@ -1723,7 +1834,7 @@ text-shadow:
 
 <div class="footer-pro">
     <div class="footer-title">BMI TAEKWONDO ACADEMY</div>
-    <div class="footer-sub">Discipline • Honor • Excellence</div>
+    <div class="footer-sub">Vini • Vidi • Vici</div>
     <div class="footer-copy">© 2026 All Rights Reserved</div>
 </div>
 
@@ -1750,7 +1861,7 @@ text-shadow:
         <div class="coach-message">
             Akan segera hadir...
             <br><br>
-            namtinya pesan ini berisi tentang catatan kemampuan atlit sebagai evaluasi.
+            nantinya pesan ini berisi tentang catatan kemampuan atlit sebagai evaluasi.
         </div>
 
     </div>
@@ -1832,7 +1943,7 @@ function kirimPendaftaranWA() {
 
     // Membuat template pesan text WhatsApp yang rapi
     const pesanText = `Halo Shabeum, saya ingin mendaftarkan anggota baru untuk BMI Taekwondo Academy. Berikut adalah datanya:\n\n` +
-                      `• Nama Lengkap : ${nama}\n` +
+                      `• Nama Lengkap Anak : ${nama}\n` +
                       `• Berat Badan : ${berat} kg\n` +
                       `• Tinggi Badan : ${tinggi} cm\n` +
                       `• Tanggal Lahir : ${tglFormat}\n` +
@@ -1850,8 +1961,6 @@ function kirimPendaftaranWA() {
 
     // Menutup modal pendaftaran
     toggleRegister(false);
-
-    // Membersihkan formulir pendaftaran
     document.getElementById("regNama").value = "";
     document.getElementById("regBerat").value = "";
     document.getElementById("regTinggi").value = "";
@@ -2048,10 +2157,23 @@ function toggleRegister(show) {
     document.getElementById("modalRegister").style.display = show ? "block" : "none";
 }
 
+// --- KONTROL GAME MODAL ---
+function toggleGame(show) {
+    const modal = document.getElementById("modalGame");
+    if (show) {
+        modal.style.display = "flex";
+    } else {
+        modal.style.display = "none";
+    }
+}
+
+// --- UPDATE WINDOW ONCLICK (Gantikan yang lama dengan ini) ---
 window.onclick = function(event) {
     if (event.target == document.getElementById("modalJadwal")) toggleJadwal(false);
     if (event.target == document.getElementById("modalRegister")) toggleRegister(false);
+    if (event.target == document.getElementById("modalGame")) toggleGame(false);
 }
+
 function toggleCoachMessage(show){
     const modal = document.getElementById("coachModal");
     const audio = document.getElementById("coachAudio");
