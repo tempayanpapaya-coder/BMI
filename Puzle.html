@@ -131,6 +131,7 @@ button:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(34, 197
 </div>
 
 <script>
+  console.log("Simpan skor dipanggil:", langkah);
 // --- 1. KONFIGURASI FIREBASE ---
 const firebaseConfig = {
     apiKey: "AIzaSyATIQKEoacfqd_P5mBn915gzwbsLQE-va8",
@@ -277,112 +278,83 @@ function checkDailyReset(){
 renderPuzzle();
 checkDailyReset();
 
-
 // =====================================================
-// LEADERBOARD GLOBAL TOP 3 DINAMIS
+// LEADERBOARD GLOBAL TOP 3
 // =====================================================
 
-async function simpanSkorKeDatabase(langkah) {
+async function simpanSkorKeDatabase(langkah){
 
-    if (!currentUser) return;
+    if(!currentUser){
+        console.log("User belum login");
+        return;
+    }
 
-    try {
+    try{
 
         let namaPemain = currentUser;
 
+        // Ambil nama asli dari database siswa
         const siswaSnapshot = await db
             .collection("siswa")
-            .where("username", "==", currentUser)
+            .where("username","==",currentUser)
             .get();
 
-        if (!siswaSnapshot.empty) {
+        if(!siswaSnapshot.empty){
             namaPemain =
-                siswaSnapshot.docs[0].data().nama || currentUser;
+                siswaSnapshot.docs[0].data().nama ||
+                currentUser;
         }
 
-        const snapshot = await db
+        const docRef = db
             .collection("puzzle_leaderboard")
-            .get();
+            .doc(currentUser);
 
-        let leaderboard = [];
+        const doc = await docRef.get();
 
-        snapshot.forEach(doc => {
-            leaderboard.push({
-                id: doc.id,
-                ...doc.data()
+        // Jika pemain belum pernah masuk database
+        if(!doc.exists){
+
+            await docRef.set({
+                username: currentUser,
+                nama: namaPemain,
+                best_score: langkah,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
-        });
 
-        const pemainLama = leaderboard.find(
-            p => p.username === currentUser
-        );
-
-        if (pemainLama) {
-
-            if (langkah >= pemainLama.best_score) {
-                console.log(
-                    "Skor tidak lebih baik dari rekor sebelumnya"
-                );
-                return;
-            }
-
-            leaderboard = leaderboard.filter(
-                p => p.username !== currentUser
+            console.log(
+                "Pemain baru berhasil masuk leaderboard"
             );
+
+            return;
         }
 
-        leaderboard.push({
-            username: currentUser,
-            nama: namaPemain,
-            best_score: langkah,
-            created_at: Date.now()
-        });
+        const oldScore = doc.data().best_score;
 
-        leaderboard.sort(
-            (a, b) => a.best_score - b.best_score
-        );
+        // Hanya update jika lebih baik
+        if(langkah < oldScore){
 
-        const top3 = leaderboard.slice(0, 3);
-
-        const oldDocs = await db
-            .collection("puzzle_leaderboard")
-            .get();
-
-        const batchDelete = db.batch();
-
-        oldDocs.forEach(doc => {
-            batchDelete.delete(doc.ref);
-        });
-
-        await batchDelete.commit();
-
-        const batchSave = db.batch();
-
-        top3.forEach(player => {
-
-            const ref = db
-                .collection("puzzle_leaderboard")
-                .doc(player.username);
-
-            batchSave.set(ref, {
-                username: player.username,
-                nama: player.nama,
-                best_score: player.best_score,
-                timestamp:
-                    firebase.firestore.FieldValue.serverTimestamp()
+            await docRef.update({
+                best_score: langkah,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-        });
+            console.log(
+                "Rekor berhasil diperbarui"
+            );
 
-        await batchSave.commit();
+        }else{
 
-        console.log("TOP 3 berhasil diperbarui");
+            console.log(
+                "Skor tidak lebih baik dari rekor sebelumnya"
+            );
 
-    } catch (err) {
+        }
+
+    }catch(error){
 
         console.error(
-            "Gagal menyimpan leaderboard:",
-            err
+            "Gagal menyimpan skor:",
+            error
         );
 
     }
@@ -390,26 +362,28 @@ async function simpanSkorKeDatabase(langkah) {
 
 
 // =====================================================
-// REALTIME TOP 3
+// REALTIME LEADERBOARD TOP 3
 // =====================================================
 
 db.collection("puzzle_leaderboard")
-.orderBy("best_score", "asc")
-.onSnapshot((querySnapshot) => {
+.orderBy("best_score","asc")
+.limit(3)
+.onSnapshot((querySnapshot)=>{
 
     const listContainer =
         document.getElementById("leaderboardList");
 
-    if (querySnapshot.empty) {
+    if(querySnapshot.empty){
 
         listContainer.innerHTML = `
-        <div style="
-            text-align:center;
-            color:#888;
-            font-size:14px;
-        ">
-            Belum ada juara.
-        </div>`;
+            <div style="
+                text-align:center;
+                color:#888;
+                font-size:14px;
+            ">
+                Belum ada juara.
+            </div>
+        `;
 
         return;
     }
@@ -417,7 +391,7 @@ db.collection("puzzle_leaderboard")
     let html = "";
     let rank = 1;
 
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach((doc)=>{
 
         const data = doc.data();
 
@@ -432,29 +406,38 @@ db.collection("puzzle_leaderboard")
                 : "";
 
         html += `
-        <div class="rank-item rank-${rank}">
-            <div class="rank-player">
-                <span class="rank-num">
-                    ${trophy}
-                </span>
+            <div class="rank-item rank-${rank}">
+                <div class="rank-player">
 
-                <span style="
-                    color:${isMe ? '#ffd36b' : '#fff'}
-                ">
-                    ${data.nama}${isMe}
-                </span>
-            </div>
+                    <span class="rank-num">
+                        ${trophy}
+                    </span>
 
-            <div class="rank-score">
-                ${data.best_score}
-                <span style="
-                    font-size:11px;
-                    color:#888
-                ">
-                    Langkah
-                </span>
+                    <span style="
+                        color:${
+                            isMe
+                            ? '#ffd36b'
+                            : '#ffffff'
+                        };
+                    ">
+                        ${data.nama}${isMe}
+                    </span>
+
+                </div>
+
+                <div class="rank-score">
+
+                    ${data.best_score}
+
+                    <span style="
+                        font-size:11px;
+                        color:#888;
+                    ">
+                        Langkah
+                    </span>
+
+                </div>
             </div>
-        </div>
         `;
 
         rank++;
@@ -462,7 +445,8 @@ db.collection("puzzle_leaderboard")
 
     listContainer.innerHTML = html;
 
-}, (error) => {
+},
+(error)=>{
 
     console.error(
         "Error leaderboard:",
@@ -470,6 +454,7 @@ db.collection("puzzle_leaderboard")
     );
 
 });
+
 // --- EFEK BACKGROUND GAMBAR ---
 const originalUrl = "https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Footer.png";
 const img = new Image();
