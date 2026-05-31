@@ -278,119 +278,198 @@ renderPuzzle();
 checkDailyReset();
 
 
-// --- 4. SISTEM DATABASE LEADERBOARD (VERSI INSTAN TANPA INDEKS) ---
+// =====================================================
+// LEADERBOARD GLOBAL TOP 3 DINAMIS
+// =====================================================
 
-function simpanSkorKeDatabase(langkah) {
-    if(!currentUser) return; 
+async function simpanSkorKeDatabase(langkah) {
 
-    const docRef = db.collection("puzzle_leaderboard").doc(currentUser);
-    
-    db.collection("siswa").where("username", "==", currentUser).get().then(snapshot => {
-        let namaPemain = currentUser; 
-        if(!snapshot.empty) {
-            namaPemain = snapshot.docs[0].data().nama || currentUser;
+    if (!currentUser) return;
+
+    try {
+
+        let namaPemain = currentUser;
+
+        const siswaSnapshot = await db
+            .collection("siswa")
+            .where("username", "==", currentUser)
+            .get();
+
+        if (!siswaSnapshot.empty) {
+            namaPemain =
+                siswaSnapshot.docs[0].data().nama || currentUser;
         }
 
-        docRef.get().then(doc => {
-            if (!doc.exists || langkah < doc.data().best_score) {
-                docRef.set({
-                    username: currentUser,
-                    nama: namaPemain,
-                    best_score: langkah,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                }).then(() => {
-                    console.log("Rekor baru berhasil dicatat!");
-                });
-            }
-        }).catch(err => {
-            // Fallback jika dokumen kosong/error agar akun lain tetap masuk datanya
-            docRef.set({
-                username: currentUser,
-                nama: namaPemain,
-                best_score: langkah,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        const snapshot = await db
+            .collection("puzzle_leaderboard")
+            .get();
+
+        let leaderboard = [];
+
+        snapshot.forEach(doc => {
+            leaderboard.push({
+                id: doc.id,
+                ...doc.data()
             });
         });
-    });
+
+        const pemainLama = leaderboard.find(
+            p => p.username === currentUser
+        );
+
+        if (pemainLama) {
+
+            if (langkah >= pemainLama.best_score) {
+                console.log(
+                    "Skor tidak lebih baik dari rekor sebelumnya"
+                );
+                return;
+            }
+
+            leaderboard = leaderboard.filter(
+                p => p.username !== currentUser
+            );
+        }
+
+        leaderboard.push({
+            username: currentUser,
+            nama: namaPemain,
+            best_score: langkah,
+            created_at: Date.now()
+        });
+
+        leaderboard.sort(
+            (a, b) => a.best_score - b.best_score
+        );
+
+        const top3 = leaderboard.slice(0, 3);
+
+        const oldDocs = await db
+            .collection("puzzle_leaderboard")
+            .get();
+
+        const batchDelete = db.batch();
+
+        oldDocs.forEach(doc => {
+            batchDelete.delete(doc.ref);
+        });
+
+        await batchDelete.commit();
+
+        const batchSave = db.batch();
+
+        top3.forEach(player => {
+
+            const ref = db
+                .collection("puzzle_leaderboard")
+                .doc(player.username);
+
+            batchSave.set(ref, {
+                username: player.username,
+                nama: player.nama,
+                best_score: player.best_score,
+                timestamp:
+                    firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+        });
+
+        await batchSave.commit();
+
+        console.log("TOP 3 berhasil diperbarui");
+
+    } catch (err) {
+
+        console.error(
+            "Gagal menyimpan leaderboard:",
+            err
+        );
+
+    }
 }
 
-// Ambil data langsung urut skor terbaik, batasi hanya 3 ranking (Top 3)
-db.collection("puzzle_leaderboard")
-  .orderBy("best_score", "asc") 
-  .limit(3) 
-  .onSnapshot((querySnapshot) => {
-      const listContainer = document.getElementById("leaderboardList");
-      
-      if(querySnapshot.empty) {
-          listContainer.innerHTML = "<div style='text-align:center; color:#888; font-size:14px;'>Belum ada juara. Jadilah yang pertama!</div>";
-          return;
-      }
 
-      let html = "";
-      let rank = 1;
-      querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          let rankClass = `rank-${rank}`; 
-          let rankTrophy = rank === 1 ? '🥇' : (rank === 2 ? '🥈' : '🥉');
-          
-          let isMe = data.username === currentUser ? " (Anda)" : "";
-          
-          html += `
-          <div class="rank-item ${rankClass}">
-              <div class="rank-player">
-                  <span class="rank-num">${rankTrophy}</span>
-                  <span style="color: ${isMe ? '#ffd36b' : '#fff'}">${data.nama}${isMe}</span>
-              </div>
-              <div class="rank-score">${data.best_score} <span style="font-size:11px; color:#888">Langkah</span></div>
-          </div>`;
-          rank++;
-      });
-      listContainer.innerHTML = html;
-}, (error) => {
-    console.error("Error klasemen: ", error);
-});
-
-
-// Real-time Listener Leaderboard (Dibatasi TOP 3 & Otomatis Terfilter Berdasarkan Bulan Berjalan)
-const activeMonth = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0');
+// =====================================================
+// REALTIME TOP 3
+// =====================================================
 
 db.collection("puzzle_leaderboard")
-  .where("bulan", "==", activeMonth) // Hanya memuat skor bulan ini saja (Sistem Auto Reset Bulanan)
-  .orderBy("best_score", "asc") 
-  .limit(3) // DIBATASI HANYA SAMPAI RANKING 3 saja
-  .onSnapshot((querySnapshot) => {
-      const listContainer = document.getElementById("leaderboardList");
-      
-      if(querySnapshot.empty) {
-          listContainer.innerHTML = "<div style='text-align:center; color:#888; font-size:14px;'>Belum ada juara bulan ini. Jadilah yang pertama!</div>";
-          return;
-      }
+.orderBy("best_score", "asc")
+.onSnapshot((querySnapshot) => {
 
-      let html = "";
-      let rank = 1;
-      querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          let rankClass = `rank-${rank}`; 
-          let rankTrophy = rank === 1 ? '🥇' : (rank === 2 ? '🥈' : '🥉');
-          
-          let isMe = data.username === currentUser ? " (Anda)" : "";
-          
-          html += `
-          <div class="rank-item ${rankClass}">
-              <div class="rank-player">
-                  <span class="rank-num">${rankTrophy}</span>
-                  <span style="color: ${isMe ? '#ffd36b' : '#fff'}">${data.nama}${isMe}</span>
-              </div>
-              <div class="rank-score">${data.best_score} <span style="font-size:11px; color:#888">Langkah</span></div>
-          </div>`;
-          rank++;
-      });
-      listContainer.innerHTML = html;
+    const listContainer =
+        document.getElementById("leaderboardList");
+
+    if (querySnapshot.empty) {
+
+        listContainer.innerHTML = `
+        <div style="
+            text-align:center;
+            color:#888;
+            font-size:14px;
+        ">
+            Belum ada juara.
+        </div>`;
+
+        return;
+    }
+
+    let html = "";
+    let rank = 1;
+
+    querySnapshot.forEach((doc) => {
+
+        const data = doc.data();
+
+        const trophy =
+            rank === 1 ? "🥇" :
+            rank === 2 ? "🥈" :
+            "🥉";
+
+        const isMe =
+            data.username === currentUser
+                ? " (Anda)"
+                : "";
+
+        html += `
+        <div class="rank-item rank-${rank}">
+            <div class="rank-player">
+                <span class="rank-num">
+                    ${trophy}
+                </span>
+
+                <span style="
+                    color:${isMe ? '#ffd36b' : '#fff'}
+                ">
+                    ${data.nama}${isMe}
+                </span>
+            </div>
+
+            <div class="rank-score">
+                ${data.best_score}
+                <span style="
+                    font-size:11px;
+                    color:#888
+                ">
+                    Langkah
+                </span>
+            </div>
+        </div>
+        `;
+
+        rank++;
+    });
+
+    listContainer.innerHTML = html;
+
 }, (error) => {
-    console.error("Error mengambil data leaderboard: ", error);
+
+    console.error(
+        "Error leaderboard:",
+        error
+    );
+
 });
-
-
 // --- EFEK BACKGROUND GAMBAR ---
 const originalUrl = "https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Footer.png";
 const img = new Image();
