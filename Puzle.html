@@ -131,7 +131,6 @@ button:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(34, 197
 </div>
 
 <script>
-  console.log("Simpan skor dipanggil:", langkah);
 // --- 1. KONFIGURASI FIREBASE ---
 const firebaseConfig = {
     apiKey: "AIzaSyATIQKEoacfqd_P5mBn915gzwbsLQE-va8",
@@ -283,7 +282,7 @@ checkDailyReset();
 // =====================================================
 
 async function simpanSkorKeDatabase(langkah){
-
+console.log("Simpan skor dipanggil:", langkah);
     if(!currentUser){
         console.log("User belum login");
         return;
