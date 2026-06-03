@@ -9,15 +9,20 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Segoe UI', Arial, sans-serif; 
+}
 
 body {
-    background: #0f172a;
+    background: #090d16; 
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: white;
+    color: #f8fafc;
     position: relative;
     overflow-x: hidden;
     padding: 20px;
@@ -27,102 +32,215 @@ body::before {
     content: "";
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background-size: cover; background-position: center; background-repeat: no-repeat;
-    filter: blur(25px); opacity: 0.25; z-index: -1;
-    transition: opacity 1s ease;
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat;
+    opacity: 0.55; /* Diubah menjadi 0.45 agar background terlihat lebih jelas */
+    z-index: -1;
 }
 
-.container { text-align:center; width: 100%; max-width: 400px; margin-bottom: 20px;}
-h1 { margin-bottom:15px; color: #22c55e; }
-.info { margin-bottom:15px; font-size:18px; font-weight: bold;}
+.container { 
+    text-align: center; 
+    width: 100%; 
+    max-width: 400px; 
+    margin-bottom: 20px;
+}
+
+h1 { 
+    margin-bottom: 15px; 
+    color: #4ade80; 
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 10px rgba(74, 222, 128, 0.2);
+}
+
+.info { 
+    margin-bottom: 20px; 
+    font-size: 16px; 
+    font-weight: bold;
+    color: #94a3b8;
+    background: #1e293b;
+    padding: 8px 16px;
+    border-radius: 30px;
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+#moves, #lives {
+    color: #4ade80;
+}
 
 button {
-    padding:12px 20px; border:none; border-radius:10px; cursor:pointer;
-    background: linear-gradient(135deg, #22c55e, #166534);
-    color:white; font-weight:bold; margin-bottom:15px; width: 100%;
-    box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3); transition: 0.3s;
+    padding: 14px 20px; 
+    border: none; 
+    border-radius: 14px; 
+    cursor: pointer;
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    color: white; 
+    font-weight: bold; 
+    margin-bottom: 20px; 
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); 
+    transition: transform 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
 }
-button:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(34, 197, 94, 0.5); }
+
+button:active { 
+    transform: scale(0.98); 
+    box-shadow: 0 2px 6px rgba(34, 197, 94, 0.5); 
+}
 
 .puzzle {
-    display:grid;
-    grid-template-columns:repeat(3, min(26vw, 110px));
-    grid-template-rows:repeat(3, min(26vw, 110px));
-    gap:12px; justify-content:center; padding:20px; border-radius:25px;
-    background:rgba(255,255,255,0.05); backdrop-filter:blur(10px);
-    box-shadow: 0 25px 50px rgba(0,0,0,.5), inset 0 1px 1px rgba(255,255,255,.15);
+    display: grid;
+    grid-template-columns: repeat(3, min(26vw, 110px));
+    grid-template-rows: repeat(3, min(26vw, 110px));
+    gap: 12px; 
+    justify-content: center; 
+    padding: 16px; 
+    border-radius: 24px;
+    background: #111827; 
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
     margin: 0 auto;
 }
 
 .tile {
-    position:relative; background:linear-gradient(145deg, #4f8cff, #1e40af);
-    border-radius:20px; display:flex; justify-content:center; align-items:center;
-    font-size: clamp(24px, 8vw, 36px); font-weight:900; color:white; cursor:pointer;
-    box-shadow: 0 15px 25px rgba(0,0,0,.45), inset 0 2px 2px rgba(255,255,255,.35), inset 0 -4px 8px rgba(0,0,0,.25);
-    transition:all .2s ease;
+    position: relative; 
+    background: linear-gradient(145deg, #3b82f6, #1d4ed8);
+    border-radius: 16px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    font-size: clamp(24px, 8vw, 34px); 
+    font-weight: 800; 
+    color: white; 
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.2);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    will-change: transform;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .tile::before {
-    content:''; position:absolute; top:8px; left:10px; right:10px; height:35%; border-radius:15px;
-    background:linear-gradient(rgba(255,255,255,.45), rgba(255,255,255,0)); pointer-events:none;
+    content: ''; 
+    position: absolute; 
+    top: 4px; left: 6px; right: 6px; height: 30%; 
+    border-radius: 10px;
+    background: linear-gradient(rgba(255,255,255,0.25), rgba(255,255,255,0)); 
+    pointer-events: none;
 }
 
-.tile:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 20px 30px rgba(59,130,246,.45), 0 10px 20px rgba(0,0,0,.5); }
-.tile:active { transform: translateY(3px) scale(.98); box-shadow: inset 0 5px 10px rgba(0,0,0,.4); }
-.empty { background:rgba(255,255,255,.05); border:2px dashed rgba(255,255,255,.15); box-shadow:none; }
-.empty::before { display:none; }
+.tile:active { 
+    transform: scale(0.95); 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
 
-.failed { filter:grayscale(1); animation:shakeFail .4s; }
-@keyframes shakeFail { 0%{transform:translateX(0);} 20%{transform:translateX(-10px);} 40%{transform:translateX(10px);} 60%{transform:translateX(-10px);} 80%{transform:translateX(10px);} 100%{transform:translateX(0);} }
+.empty { 
+    background: #1f2937; 
+    border: 2px dashed rgba(255,255,255,0.1); 
+    box-shadow: none; 
+}
+.empty::before { display: none; }
 
-/* EFEK MENANG */
-.won { border: 2px solid #22c55e; box-shadow: 0 0 40px rgba(34, 197, 94, 0.5); animation: pulseWin 1.5s infinite; }
-.won .tile:not(.empty) { background: linear-gradient(145deg, #22c55e, #166534); box-shadow: 0 15px 25px rgba(0,0,0,.45), inset 0 2px 2px rgba(255,255,255,.35); }
-@keyframes pulseWin { 0%, 100% { box-shadow: 0 0 30px rgba(34, 197, 94, 0.5); } 50% { box-shadow: 0 0 60px rgba(34, 197, 94, 0.9); } }
+.failed { 
+    animation: shakeFail 0.4s ease-in-out; 
+}
+@keyframes shakeFail { 
+    0%, 100% { transform: translateX(0); } 
+    25% { transform: translateX(-6px); } 
+    75% { transform: translateX(6px); } 
+}
 
-#message { margin-top: 15px; font-weight: bold; min-height: 24px; color: #fbbf24;}
+.won { 
+    border: 2px solid #22c55e; 
+    animation: pulseWin 2s infinite; 
+}
+.won .tile:not(.empty) { 
+    background: linear-gradient(145deg, #22c55e, #15803d); 
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+@keyframes pulseWin { 
+    0%, 100% { box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); } 
+    50% { box-shadow: 0 0 30px rgba(34, 197, 94, 0.7); } 
+}
 
-/* LEADERBOARD STYLES */
+#message { 
+    margin-top: 18px; 
+    font-weight: 600; 
+    min-height: 24px; 
+    color: #f59e0b;
+    font-size: 14px;
+    padding: 0 10px;
+    line-height: 1.4;
+}
+
 .leaderboard-box {
-    width: 100%; max-width: 400px; margin-top: 25px;
-    background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 215, 120, 0.2);
-    border-radius: 20px; padding: 20px; backdrop-filter: blur(10px);
+    width: 100%; 
+    max-width: 400px; 
+    margin-top: 25px;
+    background: #111827; 
+    border: 1px solid rgba(255, 215, 120, 0.15);
+    border-radius: 20px; 
+    padding: 18px; 
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
 }
+
 .leaderboard-title {
-    text-align: center; color: #ffd36b; font-size: 18px; font-weight: 900; margin-bottom: 15px; letter-spacing: 1px;
+    text-align: center; 
+    color: #fbbf24; 
+    font-size: 15px; 
+    font-weight: 800; 
+    margin-bottom: 15px; 
+    letter-spacing: 1px;
 }
+
 .rank-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 15px; margin-bottom: 8px; border-radius: 12px;
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05);
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    padding: 10px 14px; 
+    margin-bottom: 8px; 
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid rgba(255, 255, 255, 0.03);
 }
-.rank-1 { background: linear-gradient(90deg, rgba(212,163,89,0.3), rgba(212,163,89,0.1)); border-color: rgba(212,163,89,0.4); }
-.rank-2 { background: linear-gradient(90deg, rgba(192,192,192,0.2), transparent); border-color: rgba(192,192,192,0.3); }
-.rank-3 { background: linear-gradient(90deg, rgba(205,127,50,0.2), transparent); border-color: rgba(205,127,50,0.3); }
 
-.rank-player { display: flex; align-items: center; gap: 10px; font-weight: bold; }
-.rank-num { font-size: 14px; color: #aaa; width: 20px; }
-.rank-1 .rank-num { color: #ffd36b; font-size: 18px; }
-.rank-score { font-weight: 900; color: #22c55e; }
+.rank-1 { background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), transparent); border-color: rgba(245, 158, 11, 0.25); }
+.rank-2 { background: linear-gradient(90deg, rgba(148, 163, 184, 0.1), transparent); border-color: rgba(148, 163, 184, 0.2); }
+.rank-3 { background: linear-gradient(90deg, rgba(180, 83, 9, 0.15), transparent); border-color: rgba(180, 83, 9, 0.2); }
 
+.rank-player { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    font-weight: 600; 
+}
+.rank-num { 
+    font-size: 14px; 
+    color: #64748b; 
+    width: 20px; 
+}
+.rank-1 .rank-num { 
+    font-size: 16px; 
+}
+.rank-score { 
+    font-weight: 800; 
+    color: #4ade80; 
+}
 </style>
 </head>
 
 <body>
 
 <div class="container">
-    <h1>🧩 BMI Puzzle</h1>
     <div class="info">Langkah: <span id="moves">0</span> &nbsp;|&nbsp; Kesempatan: <span id="lives">3</span>/3</div>
 
-    <button onclick="startGame()">🔄 Acak & Mulai Permainan
-        <div id="resetInfo" style="font-size:11px; font-weight:normal; margin-top:4px;"></div>
-    </button>
+    <button onclick="startGame()">Acak & Mulai Permainan</button>
 
     <div class="puzzle" id="puzzle"></div>
     <div id="message">👇 Klik 'Acak & Mulai Permainan'</div>
 </div>
 
-<!-- UPDATE BAGIAN BOX LEADERBOARD (UBAH JADI TOP 3) -->
 <div class="leaderboard-box">
     <div class="leaderboard-title">🏆 KLASEMEN GLOBAL (TOP 3)</div>
     <div id="leaderboardList">
@@ -163,35 +281,20 @@ const message = document.getElementById("message");
 let moves = 0;
 let tiles = [1,2,3, 4,5,6, 7,8,0];
 
-function renderPuzzle(){
+function renderPuzzle() {
     puzzle.innerHTML = "";
-    tiles.forEach((value,index)=>{
-        const tile = document.createElement("div");
-        if(value === 0){
-            tile.className = "tile empty";
-        }else{
-            tile.className = "tile";
-            tile.textContent = value;
-            tile.onclick = ()=>moveTile(index);
+    tiles.forEach((tile, index) => {
+        const tileDiv = document.createElement("div");
+        tileDiv.classList.add("tile");
+        if (tile === 0) {
+            tileDiv.classList.add("empty");
+        } else {
+            tileDiv.textContent = tile;
+            tileDiv.addEventListener("click", () => moveTile(index));
         }
-        puzzle.appendChild(tile);
+        puzzle.appendChild(tileDiv);
     });
 }
-
-// FUNGSI HITUNG MUNDUR RESET AKHIR BULAN
-function updateResetInfo(){
-    const now = new Date();
-    // Dapatkan hari pertama di bulan berikutnya pukul 00:00:00
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0);
-    const diff = endOfMonth - now;
-    
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    
-    document.getElementById('resetInfo').innerHTML = `Reset bulanan dalam ${days}h ${hours}j ${minutes}m`;
-}
-setInterval(updateResetInfo, 60000); updateResetInfo();
 
 function moveTile(index){
     if(gameOver) return;
@@ -217,8 +320,13 @@ function checkWin(){
 
         if(moves >= 51){
             kurangiNyawa();
-            message.innerHTML = "Selesai, tapi terlalu banyak langkah!";
-            setTimeout(() => alert('Anda menang, tapi menggunakan ' + moves + ' langkah (Maks 50). Kesempatan harian Anda berkurang 1.'), 300);
+            if(lives <= 0) {
+                tampilkanPesanHabis();
+                setTimeout(() => alert(ambilFormatPesanHabis()), 300);
+            } else {
+                message.innerHTML = "Selesai, tapi terlalu banyak langkah!";
+                setTimeout(() => alert('Anda menang, tapi menggunakan ' + moves + ' langkah (Maks 50). Kesempatan harian Anda berkurang 1.'), 300);
+            }
         } else {
             message.innerHTML = "🏆 LUAR BIASA! Selesai dalam " + moves + " langkah!";
             simpanSkorKeDatabase(moves); 
@@ -231,14 +339,42 @@ function kurangiNyawa(){
     lives--;
     localStorage.setItem('lives', lives);
     document.getElementById('lives').textContent = lives;
+    
+    // Simpan jam ketika nyawa habis agar tetap konsisten saat direfresh
+    if(lives <= 0 && !localStorage.getItem('lockoutTime')) {
+        const sekarang = new Date();
+        const jam = String(sekarang.getHours()).padStart(2, '0');
+        const menit = String(sekarang.getMinutes()).padStart(2, '0');
+        localStorage.setItem('lockoutTime', `${jam}:${menit}`);
+    }
+}
+
+// Fungsi pembantu untuk membuat format teks waktu
+function ambilFormatPesanHabis() {
+    let waktuBermain = localStorage.getItem('lockoutTime');
+    if(!waktuBermain) {
+        const sekarang = new Date();
+        const jam = String(sekarang.getHours()).padStart(2, '0');
+        const menit = String(sekarang.getMinutes()).padStart(2, '0');
+        waktuBermain = `${jam}:${menit}`;
+    }
+    return `🚫 Kesempatan anda telah habis hari ini, silahkan kembali besuk pukul ${waktuBermain} WIB.`;
+}
+
+function tampilkanPesanHabis() {
+    message.innerHTML = ambilFormatPesanHabis();
 }
 
 function loseGame(){
     document.querySelector(".puzzle").classList.add("failed");
     gameOver = true;
     kurangiNyawa();
-    message.innerHTML = "💀 Kesempatan gagal! Maksimal 50 langkah.";
-    if(lives <= 0) message.innerHTML = "🚫 Kesempatan hari ini habis. Kembali besok.";
+    
+    if(lives <= 0) {
+        tampilkanPesanHabis();
+    } else {
+        message.innerHTML = "💀 Kesempatan gagal! Maksimal 50 langkah.";
+    }
 }
 
 function shufflePuzzle(){
@@ -257,7 +393,11 @@ function shufflePuzzle(){
 
 function startGame(){
     document.querySelector(".puzzle").classList.remove("failed", "won"); 
-    if(lives <= 0){ alert("Kesempatan hari ini habis."); return; }
+    if(lives <= 0){ 
+        alert(ambilFormatPesanHabis()); 
+        tampilkanPesanHabis();
+        return; 
+    }
     gameOver = false;
     message.innerHTML = "🔥 Ayo pecahkan rekor!";
     shufflePuzzle();
@@ -268,9 +408,15 @@ function checkDailyReset(){
     if(localStorage.getItem('lastDate') !== today){
         localStorage.setItem('lastDate', today);
         localStorage.setItem('lives', MAX_LIVES);
+        localStorage.removeItem('lockoutTime'); // Hapus jam kunci jika hari sudah berganti
     }
     lives = parseInt(localStorage.getItem('lives')) || MAX_LIVES;
     document.getElementById('lives').textContent = lives;
+    
+    // Jika waktu dicek dan nyawa masih kosong, tampilkan langsung di layar teks pengunciannya
+    if (lives <= 0) {
+        tampilkanPesanHabis();
+    }
 }
 
 // Inisialisasi awal
@@ -280,110 +426,50 @@ checkDailyReset();
 // =====================================================
 // LEADERBOARD GLOBAL TOP 3
 // =====================================================
-
 async function simpanSkorKeDatabase(langkah){
-console.log("Simpan skor dipanggil:", langkah);
-    if(!currentUser){
-        console.log("User belum login");
-        return;
-    }
-
+    if(!currentUser) return;
     try{
-
         let namaPemain = currentUser;
-
-        // Ambil nama asli dari database siswa
-        const siswaSnapshot = await db
-            .collection("siswa")
-            .where("username","==",currentUser)
-            .get();
-
+        const siswaSnapshot = await db.collection("siswa").where("username","==",currentUser).get();
         if(!siswaSnapshot.empty){
-            namaPemain =
-                siswaSnapshot.docs[0].data().nama ||
-                currentUser;
+            namaPemain = siswaSnapshot.docs[0].data().nama || currentUser;
         }
 
-        const docRef = db
-            .collection("puzzle_leaderboard")
-            .doc(currentUser);
-
+        const docRef = db.collection("puzzle_leaderboard").doc(currentUser);
         const doc = await docRef.get();
 
-        // Jika pemain belum pernah masuk database
         if(!doc.exists){
-
             await docRef.set({
                 username: currentUser,
                 nama: namaPemain,
                 best_score: langkah,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
-
-            console.log(
-                "Pemain baru berhasil masuk leaderboard"
-            );
-
             return;
         }
 
         const oldScore = doc.data().best_score;
-
-        // Hanya update jika lebih baik
         if(langkah < oldScore){
-
             await docRef.update({
                 best_score: langkah,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
-
-            console.log(
-                "Rekor berhasil diperbarui"
-            );
-
-        }else{
-
-            console.log(
-                "Skor tidak lebih baik dari rekor sebelumnya"
-            );
-
         }
-
     }catch(error){
-
-        console.error(
-            "Gagal menyimpan skor:",
-            error
-        );
-
+        console.error("Gagal menyimpan skor:", error);
     }
 }
-
 
 // =====================================================
 // REALTIME LEADERBOARD TOP 3
 // =====================================================
-
 db.collection("puzzle_leaderboard")
 .orderBy("best_score","asc")
 .limit(3)
 .onSnapshot((querySnapshot)=>{
-
-    const listContainer =
-        document.getElementById("leaderboardList");
-
+    const listContainer = document.getElementById("leaderboardList");
     if(querySnapshot.empty){
-
-        listContainer.innerHTML = `
-            <div style="
-                text-align:center;
-                color:#888;
-                font-size:14px;
-            ">
-                Belum ada juara.
-            </div>
-        `;
-
+        listContainer.innerHTML = `<div style="text-align:center; color:#888; font-size:14px;">Belum ada juara.</div>`;
         return;
     }
 
@@ -391,84 +477,32 @@ db.collection("puzzle_leaderboard")
     let rank = 1;
 
     querySnapshot.forEach((doc)=>{
-
         const data = doc.data();
-
-        const trophy =
-            rank === 1 ? "🥇" :
-            rank === 2 ? "🥈" :
-            "🥉";
-
-        const isMe =
-            data.username === currentUser
-                ? " (Anda)"
-                : "";
+        const trophy = rank === 1 ? "🥇" : rank === 2 ? "🥈" : "🥉";
+        const isMe = data.username === currentUser ? " (Anda)" : "";
 
         html += `
             <div class="rank-item rank-${rank}">
                 <div class="rank-player">
-
-                    <span class="rank-num">
-                        ${trophy}
-                    </span>
-
-                    <span style="
-                        color:${
-                            isMe
-                            ? '#ffd36b'
-                            : '#ffffff'
-                        };
-                    ">
-                        ${data.nama}${isMe}
-                    </span>
-
+                    <span class="rank-num">${trophy}</span>
+                    <span style="color:${isMe ? '#ffd36b' : '#ffffff'};">${data.nama}${isMe}</span>
                 </div>
-
                 <div class="rank-score">
-
-                    ${data.best_score}
-
-                    <span style="
-                        font-size:11px;
-                        color:#888;
-                    ">
-                        Langkah
-                    </span>
-
+                    ${data.best_score} <span style="font-size:11px; color:#888;">Langkah</span>
                 </div>
             </div>
         `;
-
         rank++;
     });
-
     listContainer.innerHTML = html;
-
-},
-(error)=>{
-
-    console.error(
-        "Error leaderboard:",
-        error
-    );
-
+}, (error)=>{
+    console.error("Error leaderboard:", error);
 });
 
-// --- EFEK BACKGROUND GAMBAR ---
-const originalUrl = "https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Footer.png";
-const img = new Image();
-img.crossOrigin = "anonymous";
-img.onload = function(){
-    const canvas = document.createElement("canvas");
-    const scale = 0.2; 
-    canvas.width = img.width * scale; canvas.height = img.height * scale;
-    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-    const compressed = canvas.toDataURL("image/jpeg", 0.3);
-    const style = document.createElement('style');
-    style.innerHTML = `body::before { background-image: url('${compressed}'); }`;
-    document.head.appendChild(style);
-};
-img.src = originalUrl;
+// --- EFEK BACKGROUND GAMBAR OPTIMASILed ---
+const style = document.createElement('style');
+style.innerHTML = `body::before { background-image: url('https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Footer.png'); }`;
+document.head.appendChild(style);
 </script>
 
 </body>
