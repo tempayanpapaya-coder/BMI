@@ -35,7 +35,7 @@ body::before {
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat;
-    opacity: 0.55; /* Diubah menjadi 0.45 agar background terlihat lebih jelas */
+    opacity: 0.45; 
     z-index: -1;
 }
 
@@ -51,7 +51,6 @@ h1 {
     color: #4ade80; 
     font-weight: 800;
     letter-spacing: 0.5px;
-    text-shadow: 0 2px 10px rgba(74, 222, 128, 0.2);
 }
 
 .info { 
@@ -81,42 +80,50 @@ button {
     margin-bottom: 20px; 
     width: 100%;
     box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); 
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s;
     -webkit-tap-highlight-color: transparent;
 }
 
 button:active { 
     transform: scale(0.98); 
-    box-shadow: 0 2px 6px rgba(34, 197, 94, 0.5); 
+}
+
+/* KUNCI PERBAIKAN UKURAN KOTAK */
+:root {
+    --tile-size: min(26vw, 100px); /* Disesuaikan sedikit agar pas di layar HP kecil */
+    --gap-size: 10px;
+    --padding-size: 16px;
 }
 
 .puzzle {
-    display: grid;
-    grid-template-columns: repeat(3, min(26vw, 110px));
-    grid-template-rows: repeat(3, min(26vw, 110px));
-    gap: 12px; 
-    justify-content: center; 
-    padding: 16px; 
+    position: relative;
+    /* Lebar & Tinggi dikunci total berdasarkan kalkulasi ubin + gap + padding */
+    width: calc((var(--tile-size) * 3) + (var(--gap-size) * 2) + (var(--padding-size) * 2));
+    height: calc((var(--tile-size) * 3) + (var(--gap-size) * 2) + (var(--padding-size) * 2));
+    padding: var(--padding-size); 
     border-radius: 24px;
     background: #111827; 
     border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
     margin: 0 auto;
+    box-sizing: border-box;
 }
 
 .tile {
-    position: relative; 
+    position: absolute; 
+    width: var(--tile-size);
+    height: var(--tile-size);
     background: linear-gradient(145deg, #3b82f6, #1d4ed8);
     border-radius: 16px; 
     display: flex; 
     justify-content: center; 
     align-items: center;
-    font-size: clamp(24px, 8vw, 34px); 
+    font-size: clamp(22px, 7vw, 32px); 
     font-weight: 800; 
     color: white; 
     cursor: pointer;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.2);
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: transform 0.15s ease-out; /* Dipercepat sedikit agar lebih responsif */
     will-change: transform;
     -webkit-tap-highlight-color: transparent;
 }
@@ -132,36 +139,22 @@ button:active {
 
 .tile:active { 
     transform: scale(0.95); 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
 }
-
-.empty { 
-    background: #1f2937; 
-    border: 2px dashed rgba(255,255,255,0.1); 
-    box-shadow: none; 
-}
-.empty::before { display: none; }
 
 .failed { 
     animation: shakeFail 0.4s ease-in-out; 
 }
 @keyframes shakeFail { 
-    0%, 100% { transform: translateX(0); } 
+    0%, 100+ { transform: translateX(0); } 
     25% { transform: translateX(-6px); } 
     75% { transform: translateX(6px); } 
 }
 
 .won { 
     border: 2px solid #22c55e; 
-    animation: pulseWin 2s infinite; 
 }
-.won .tile:not(.empty) { 
+.won .tile { 
     background: linear-gradient(145deg, #22c55e, #15803d); 
-    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-}
-@keyframes pulseWin { 
-    0%, 100% { box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); } 
-    50% { box-shadow: 0 0 30px rgba(34, 197, 94, 0.7); } 
 }
 
 #message { 
@@ -280,25 +273,48 @@ const message = document.getElementById("message");
 
 let moves = 0;
 let tiles = [1,2,3, 4,5,6, 7,8,0];
+let tileElements = {}; 
 
-function renderPuzzle() {
+function susunDOMAwal() {
     puzzle.innerHTML = "";
-    tiles.forEach((tile, index) => {
+    // Hanya membuat ubin 1 sampai 8, ubin 0 (kosong) dihilangkan total dari DOM
+    for (let i = 1; i <= 8; i++) {
         const tileDiv = document.createElement("div");
         tileDiv.classList.add("tile");
-        if (tile === 0) {
-            tileDiv.classList.add("empty");
-        } else {
-            tileDiv.textContent = tile;
-            tileDiv.addEventListener("click", () => moveTile(index));
-        }
+        tileDiv.textContent = i;
+        tileDiv.addEventListener("click", () => tanganiKlikUbin(i));
         puzzle.appendChild(tileDiv);
+        tileElements[i] = tileDiv;
+    }
+}
+
+// KUNCI UTAMA: Penyesuaian kalkulasi posisi agar masuk presisi di dalam frame .puzzle
+function updatePosisiVisual() {
+    const size = "var(--tile-size)";
+    const gap = "var(--gap-size)";
+    const padding = "var(--padding-size)";
+
+    tiles.forEach((tile, index) => {
+        if (tile !== 0) {
+            const row = Math.floor(index / 3);
+            const col = index % 3;
+            
+            // Menggunakan titik 0,0 kontainer induk yang sudah terpotong padding dengan benar
+            const x = `calc(${padding} + (${col} * (${size} + ${gap})))`;
+            const y = `calc(${padding} + (${row} * (${size} + ${gap})))`;
+            
+            tileElements[tile].style.left = "0px";
+            tileElements[tile].style.top = "0px";
+            tileElements[tile].style.transform = `translate(${x}, ${y})`;
+        }
     });
 }
 
-function moveTile(index){
+function tanganiKlikUbin(nomorUbin) {
     if(gameOver) return;
+    const index = tiles.indexOf(nomorUbin);
     const empty = tiles.indexOf(0);
+    
     const rowTile = Math.floor(index/3); const colTile = index%3;
     const rowEmpty = Math.floor(empty/3); const colEmpty = empty%3;
     
@@ -307,7 +323,7 @@ function moveTile(index){
         moves++;
         movesText.textContent = moves;
         if(moves >= 51){ loseGame(); return; }
-        renderPuzzle();
+        updatePosisiVisual();
         checkWin();
     }
 }
@@ -316,7 +332,7 @@ function checkWin(){
     const win = [1,2,3,4,5,6,7,8,0];
     if(JSON.stringify(tiles) === JSON.stringify(win)){
         gameOver = true;
-        document.querySelector(".puzzle").classList.add("won");
+        puzzle.classList.add("won");
 
         if(moves >= 51){
             kurangiNyawa();
@@ -340,7 +356,6 @@ function kurangiNyawa(){
     localStorage.setItem('lives', lives);
     document.getElementById('lives').textContent = lives;
     
-    // Simpan jam ketika nyawa habis agar tetap konsisten saat direfresh
     if(lives <= 0 && !localStorage.getItem('lockoutTime')) {
         const sekarang = new Date();
         const jam = String(sekarang.getHours()).padStart(2, '0');
@@ -349,7 +364,6 @@ function kurangiNyawa(){
     }
 }
 
-// Fungsi pembantu untuk membuat format teks waktu
 function ambilFormatPesanHabis() {
     let waktuBermain = localStorage.getItem('lockoutTime');
     if(!waktuBermain) {
@@ -366,7 +380,7 @@ function tampilkanPesanHabis() {
 }
 
 function loseGame(){
-    document.querySelector(".puzzle").classList.add("failed");
+    puzzle.classList.add("failed");
     gameOver = true;
     kurangiNyawa();
     
@@ -379,7 +393,7 @@ function loseGame(){
 
 function shufflePuzzle(){
     moves = 0; movesText.textContent = 0;
-    for(let i=0; i<300; i++){
+    for(let i=0; i<200; i++){
         const empty = tiles.indexOf(0);
         const row = Math.floor(empty/3); const col = empty%3;
         let p = [];
@@ -388,11 +402,11 @@ function shufflePuzzle(){
         const rand = p[Math.floor(Math.random()*p.length)];
         [tiles[rand],tiles[empty]] = [tiles[empty],tiles[rand]];
     }
-    renderPuzzle();
+    updatePosisiVisual();
 }
 
 function startGame(){
-    document.querySelector(".puzzle").classList.remove("failed", "won"); 
+    puzzle.classList.remove("failed", "won"); 
     if(lives <= 0){ 
         alert(ambilFormatPesanHabis()); 
         tampilkanPesanHabis();
@@ -408,19 +422,19 @@ function checkDailyReset(){
     if(localStorage.getItem('lastDate') !== today){
         localStorage.setItem('lastDate', today);
         localStorage.setItem('lives', MAX_LIVES);
-        localStorage.removeItem('lockoutTime'); // Hapus jam kunci jika hari sudah berganti
+        localStorage.removeItem('lockoutTime');
     }
     lives = parseInt(localStorage.getItem('lives')) || MAX_LIVES;
     document.getElementById('lives').textContent = lives;
     
-    // Jika waktu dicek dan nyawa masih kosong, tampilkan langsung di layar teks pengunciannya
     if (lives <= 0) {
         tampilkanPesanHabis();
     }
 }
 
-// Inisialisasi awal
-renderPuzzle();
+// Inisialisasi awal permainan
+susunDOMAwal();
+updatePosisiVisual();
 checkDailyReset();
 
 // =====================================================
@@ -460,9 +474,6 @@ async function simpanSkorKeDatabase(langkah){
     }
 }
 
-// =====================================================
-// REALTIME LEADERBOARD TOP 3
-// =====================================================
 db.collection("puzzle_leaderboard")
 .orderBy("best_score","asc")
 .limit(3)
@@ -499,7 +510,6 @@ db.collection("puzzle_leaderboard")
     console.error("Error leaderboard:", error);
 });
 
-// --- EFEK BACKGROUND GAMBAR OPTIMASILed ---
 const style = document.createElement('style');
 style.innerHTML = `body::before { background-image: url('https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Footer.png'); }`;
 document.head.appendChild(style);
