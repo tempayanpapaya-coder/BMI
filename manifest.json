@@ -1,0 +1,22 @@
+{
+    "short_name": "PuzzleMaster",
+    "name": "Puzzle Master - Taekwondo",
+    "description": "Game Puzzle 3x3 interaktif dengan sinkronisasi Leaderboard Firebase Cloud.",
+    "icons": [
+        {
+            "src": "https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Footer.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Footer.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": "./Puzle.html",
+    "background_color": "#0b0f19",
+    "theme_color": "#ff9f43",
+    "display": "standalone",
+    "orientation": "portrait"
+}
