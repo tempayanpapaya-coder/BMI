@@ -1,0 +1,173 @@
+/* --- RESET & LAYOUT DASAR --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #121826 0%, #1a233a 100%);
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    padding: 20px;
+}
+
+/* --- CONTAINER UTAMA GAME --- */
+.container {
+    background: linear-gradient(rgba(24, 32, 49, 0.88), rgba(18, 24, 38, 0.4)), url('https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Persegi.png');
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
+}
+
+
+.info {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #cbd5e0;
+}
+
+#moves, #lives {
+    color: #ffae00;
+    font-weight: bold;
+}
+
+/* --- TOMBOL ACAK --- */
+button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(90deg, #ff7b00, #ff5100);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 20px;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 81, 0, 0.4);
+}
+
+/* --- WADAH PAPAN PUZZLE --- */
+.puzzle {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 6px; /* Memberikan celah antar pecahan agar tekstur ukiran terlihat indah */
+    background: rgba(0, 0, 0, 0.4);
+    padding: 8px;
+    border-radius: 12px;
+    margin: 15px auto;
+    width: 300px;  /* Kunci lebar absolut */
+    height: 300px; /* Kunci tinggi absolut agar rasio 1:1 persegi */
+    box-sizing: border-box;
+}
+
+/* --- KOTAK ANGKA BERGAMBAR --- */
+.tile {
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #ffffff;
+    /* Memberikan bayangan hitam tegas pada teks agar angka tetap terbaca jelas di atas gambar */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 10px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    user-select: none;
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.4);
+    transition: filter 0.15s ease;
+
+    /* INTEGRASI GAMBAR LATAR BELAKANG */
+    background-image: url('https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Persegi.png'); /* Ganti dengan nama file gambar yang kamu inginkan */
+    background-size: 284px 284px; /* UKURAN WAJIB: Total lebar .puzzle dikurangi padding (300px - 16px) */
+    background-repeat: no-repeat;
+}
+
+.tile:not(.empty):hover {
+    filter: brightness(1.2); /* Efek menyala ringan saat kursor di atas kotak */
+}
+
+/* --- KOTAK KOSONG (ANGKA 0) --- */
+.tile.empty {
+    background: #0f141c !important; /* Menghapus paksa gambar latar belakang khusus kotak kosong */
+    border: 2px dashed rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.8);
+    cursor: default;
+}
+
+
+
+.tile:not(.empty):hover {
+    background: linear-gradient(135deg, #374665 0%, #242f46 100%);
+    transform: scale(1.02);
+}
+
+.tile.empty {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    cursor: default;
+}
+
+#message {
+    font-size: 0.95rem;
+    color: #a0aec0;
+    font-style: italic;
+    min-height: 24px;
+}
+
+/* --- KOTAK LEADERBOARD (TOP 3) --- */
+.leaderboard-box {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 20px;
+    width: 100%;
+    max-width: 380px;
+}
+
+.leaderboard-title {
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    color: #ffae00;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    margin-bottom: 6px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.leaderboard-moves {
+    color: #a0aec0;
+    font-size: 0.9rem;
+}
