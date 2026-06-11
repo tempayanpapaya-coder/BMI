@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puzzle 3x3 - Leaderboard</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<link rel="stylesheet" href="CSS/Game.css">
+</head>
+<body>
+
+<div class="container">
+  
+    <div class="info">Langkah: <span id="moves">0</span> &nbsp;|&nbsp; Kesempatan: <span id="lives">3</span>/3</div>
+    <button onclick="startGame()">Acak & Mulai Permainan</button>
+ <div id="message">👇 Klik 'Acak & Mulai Permainan'</div>
+ 
+ 
+    <div class="puzzle" id="puzzle"></div>
+</div>
+
+<div class="leaderboard-box">
+    <div class="leaderboard-title">🏆 KLASEMEN GLOBAL (TOP 3)</div>
+    <div id="leaderboardList">
+        <div style="text-align:center; color:#888; font-size:14px;">Memuat data klasemen...</div>
+    </div>
+</div>
+
+
+<script src="JS/Game.js"></script>
+</body>
+</html>
