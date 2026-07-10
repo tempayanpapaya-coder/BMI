@@ -1,0 +1,140 @@
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    background: url("/Asset/Background.jpg") center center / cover no-repeat fixed;
+
+    font-family: 'Segoe UI', sans-serif;
+    color: white;
+}
+
+/* =======================
+   OVERLAY TOKO
+======================= */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(5px);
+
+    opacity: 0;
+    pointer-events: none;
+    transition: .25s;
+
+    z-index: 1000;
+}
+
+.overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* =======================
+   PANEL TOKO
+======================= */
+
+.panel {
+    width: 340px;
+    max-width: 90%;
+
+    background: #151414;
+
+    border: 2px solid #e67e22;
+    border-radius: 16px;
+
+    padding: 20px;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,.7);
+
+    text-align: center;
+}
+
+.panel h3 {
+    margin-top: 0;
+}
+
+/* =======================
+   LIST ITEM TOKO
+======================= */
+
+.shop-item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    text-align: left;
+}
+
+.shop-item-list > div {
+    background: rgba(255,255,255,.05);
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* =======================
+   TOMBOL BELI
+======================= */
+
+.shop-item-list button {
+    background: #e67e22;
+
+    color: white;
+
+    border: none;
+    border-radius: 5px;
+
+    padding: 6px 12px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    transition: .2s;
+}
+
+.shop-item-list button:hover {
+    transform: translateY(-2px);
+}
+
+.shop-item-list button:active {
+    transform: scale(.95);
+}
+
+/* =======================
+   TOMBOL KELUAR
+======================= */
+
+.btn-close {
+    width: 100%;
+
+    margin-top: 15px;
+
+    background: #333;
+
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 10px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.btn-close:hover {
+    background: #444;
+}

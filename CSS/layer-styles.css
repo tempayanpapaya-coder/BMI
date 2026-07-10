@@ -1,0 +1,110 @@
+/* ==========================================================================
+   LAYER SYSTEM CSS - Tambahkan ke stylesheet utama game Anda (TKD.css)
+   ========================================================================== */
+
+/* ---- Kartu Tertumpuk (layer > 0) ---- */
+.card-stacked {
+    outline: 2px dashed rgba(255, 200, 0, 0.35);
+    box-shadow: -4px -4px 0 rgba(0,0,0,0.4), -8px -8px 0 rgba(0,0,0,0.2);
+}
+
+/* ---- Kartu yang BEBAS (layer 0 atau penindih sudah clear) ---- */
+.card-free {
+    outline: 2px solid rgba(0, 255, 180, 0.55);
+    box-shadow: 0 0 8px rgba(0, 255, 180, 0.4);
+    cursor: pointer;
+}
+
+/* ---- Kartu yang TERTINDIH / BLOCKED ---- */
+.card-blocked {
+    filter: brightness(0.45) saturate(0.3);
+    cursor: not-allowed;
+    outline: 2px solid rgba(255, 60, 60, 0.35);
+}
+
+/* ---- Animasi shake saat klik kartu yang tertindih ---- */
+@keyframes cardShake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-5px) rotate(-1deg); }
+    40%       { transform: translateX(5px)  rotate(1deg); }
+    60%       { transform: translateX(-3px) rotate(-0.5deg); }
+    80%       { transform: translateX(3px)  rotate(0.5deg); }
+}
+.card-shake {
+    animation: cardShake 0.4s ease-in-out !important;
+}
+
+/* ---- Badge Layer (ikon di pojok kanan atas kartu) ---- */
+.layer-badge {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: 0.55rem;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.9;
+}
+
+/* ---- Mode layer aktif: sedikit ruang ekstra antar kartu ---- */
+#game.layer-mode {
+    gap: 10px;
+}
+
+/* ---- Modal Custom (pengganti alert/confirm) ---- */
+#customModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+#customModal.modal-show {
+    display: flex;
+}
+#customModalBox {
+    background: #1a1a2e;
+    border: 2px solid #00ffff;
+    border-radius: 16px;
+    padding: 28px 32px;
+    min-width: 260px;
+    max-width: 90vw;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0,255,255,0.3);
+    animation: modalPop 0.25s ease;
+}
+@keyframes modalPop {
+    from { transform: scale(0.8); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
+#customModalTitle {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 10px;
+}
+#customModalMsg {
+    font-size: 1rem;
+    color: #e0e0e0;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+#customModalBtns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+.modal-btn {
+    padding: 9px 26px;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.1s;
+}
+.modal-btn:active { transform: scale(0.95); opacity: 0.85; }
+.modal-btn-ok     { background: #21bb1a; color: #fff; }
+.modal-btn-cancel { background: #d50000; color: #fff; }
