@@ -1,22 +1,33 @@
 {
-    "short_name": "PuzzleMaster",
-    "name": "Puzzle Master - Taekwondo",
-    "description": "Game Puzzle 3x3 interaktif dengan sinkronisasi Leaderboard Firebase Cloud.",
-    "icons": [
-        {
-            "src": "https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Footer.png",
-            "type": "image/png",
-            "sizes": "192x192"
-        },
-        {
-            "src": "https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Footer.png",
-            "type": "image/png",
-            "sizes": "512x512"
-        }
-    ],
-    "start_url": "./Puzle.html",
-    "background_color": "#0b0f19",
-    "theme_color": "#ff9f43",
-    "display": "standalone",
-    "orientation": "portrait"
+  "name": "BMI Taekwondo Academy - Member Portal",
+  "short_name": "BMI Member",
+  "description": "Portal member BMI Taekwondo Academy: status kas, jadwal latihan, dan kalender kehadiran",
+  "start_url": "./index.html",
+  "scope": "./",
+  "id": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0c0804",
+  "theme_color": "#0c0804",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2016.20.14..png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2016.20.14..png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2016.20.14..png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
 }

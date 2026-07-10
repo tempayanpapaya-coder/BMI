@@ -11,6 +11,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// --- STATE GLOBAL (dipakai lintas fitur: kalender kehadiran, mini header, dll) ---
+let currentMemberData = null;
+let jadwalGlobalData = null;
+const NAMA_BULAN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+
 function getMingguKe() {
     const now = new Date();
     const tanggal = now.getDate();
@@ -109,6 +114,8 @@ function aktifkanRealtimeUpdate(username) {
 
 // --- FUNGSI TAMPILKAN PROFIL ---
 function tampilkanProfil(data) {
+    currentMemberData = data; // simpan untuk dipakai fitur Kalender Kehadiran
+
     const now = new Date();
     const mingguSekarangKey = getMingguKey();
     const alertBox = document.getElementById("alertBox");
@@ -120,6 +127,12 @@ function tampilkanProfil(data) {
     document.getElementById("memberUser").innerText = "@" + (data.username || "user");
     document.getElementById("valSabuk").innerText = data.warna_sabuk || "-";
     document.getElementById("valFisik").innerText = (data.berat_badan || 0) + "kg / " + (data.tinggi_badan || 0) + "cm";
+
+    // Isi mini header sticky & matikan skeleton loading (data sudah siap ditampilkan)
+    const miniName = document.getElementById("miniName");
+    if (miniName) miniName.innerText = data.nama || "Member";
+    const profSection = document.getElementById("profileSection");
+    if (profSection) profSection.classList.remove("loading");
     
     if(data.tanggal_lahir) {
         const p = data.tanggal_lahir.split("-");
@@ -238,6 +251,7 @@ function htmlEntities(str) {
 db.collection("jadwal").doc("global").onSnapshot(doc => {
     if(!doc.exists) return;
     const j = doc.data();
+    jadwalGlobalData = j; // simpan untuk dipakai fitur Kalender Kehadiran
     const hariList = ["senin","selasa","rabu","kamis","jumat","sabtu","minggu"];
     let html = "";
 
@@ -302,6 +316,7 @@ window.onclick = function(event) {
     if (event.target == document.getElementById("modalJadwal")) toggleJadwal(false);
     if (event.target == document.getElementById("modalRegister")) toggleRegister(false);
     if (event.target == document.getElementById("modalGame")) toggleGame(false);
+    if (event.target == document.getElementById("modalKalender")) toggleKalender(false);
 }
 
 function toggleCoachMessage(show){
@@ -320,4 +335,132 @@ function toggleCoachMessage(show){
         // Menghentikan lagu saat modal ditutup
         audio.pause(); 
     }
+}
+
+// ==========================================================
+// STICKY MINI HEADER — muncul begitu user scroll ke bawah
+// ==========================================================
+window.addEventListener("scroll", function () {
+    const mh = document.getElementById("miniHeader");
+    if (!mh) return;
+    if (window.scrollY > 260) {
+        mh.classList.add("show");
+    } else {
+        mh.classList.remove("show");
+    }
+});
+
+// ==========================================================
+// FITUR: KALENDER KEHADIRAN
+// Menggabungkan hari latihan terjadwal (dari koleksi "jadwal")
+// dengan status kas mingguan member (lunas / belum) sebagai
+// indikator kehadiran & keaktifan, karena sistem saat ini
+// mencatat kewajiban per minggu, bukan absen harian per sesi.
+// ==========================================================
+function toggleKalender(show) {
+    const modal = document.getElementById("modalKalender");
+    if (!modal) return;
+    modal.style.display = show ? "block" : "none";
+    if (show) {
+        if (currentMemberData) {
+            bangunKalenderKehadiran(currentMemberData);
+        } else {
+            document.getElementById("calMonthLabel").innerText = "Memuat data...";
+        }
+    }
+}
+
+function bangunKalenderKehadiran(data) {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth(); // 0-indexed
+
+    document.getElementById("calMonthLabel").innerText = `${NAMA_BULAN[month]} ${year}`;
+
+    // --- Tentukan hari-hari (Senin..Minggu) yang punya sesi latihan terjadwal ---
+    const hariMap = { 0: "minggu", 1: "senin", 2: "selasa", 3: "rabu", 4: "kamis", 5: "jumat", 6: "sabtu" };
+    const trainingDow = new Set();
+    if (jadwalGlobalData) {
+        Object.keys(hariMap).forEach((k) => {
+            const hari = hariMap[k];
+            if ((jadwalGlobalData[hari] || []).length > 0) trainingDow.add(parseInt(k));
+        });
+    }
+
+    // --- Status kas minggu ini (persis sama dengan logika di tampilkanProfil) ---
+    const mingguIniKey = getMingguKey();
+    const kuotaKas = parseInt(data.kuota_kas || 0);
+    const isLunasSekarang = (data.minggu_bayar === mingguIniKey) || (kuotaKas > 0);
+
+    // --- Bangun grid kalender bulan berjalan (Senin s/d Minggu) ---
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startOffset = (firstDay.getDay() + 6) % 7; // ubah Minggu=0 jadi index Senin-first
+
+    let gridHtml = "";
+    ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"].forEach((d) => {
+        gridHtml += `<div class="cal-daylabel">${d}</div>`;
+    });
+    for (let i = 0; i < startOffset; i++) {
+        gridHtml += `<div class="cal-cell empty"></div>`;
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+        const thisDate = new Date(year, month, d);
+        const dow = thisDate.getDay();
+        const isToday = d === now.getDate();
+        let cls = "cal-cell";
+        if (trainingDow.has(dow)) cls += " training";
+        if (isToday) cls += " today " + (isLunasSekarang ? "lunas" : "belum");
+        gridHtml += `<div class="${cls}">${d}</div>`;
+    }
+    document.getElementById("calGrid").innerHTML = gridHtml;
+
+    // --- Strip riwayat kas terakhir (maks 12 entri terakhir, urut kronologis) ---
+    const riwayat = data.riwayat_kas || [];
+    const recent = riwayat.slice(-12);
+    let stripHtml = "";
+    recent.forEach((txt) => {
+        const isBorongan = txt.includes("BORONGAN") || txt.includes("Bayar");
+        const isKoreksi = txt.includes("Koreksi") || txt.includes("mengoreksi");
+        let cls = "streak-chip info";
+        let label = "Info";
+        if (isBorongan) { cls = "streak-chip kas"; label = "✅ Kas"; }
+        else if (isKoreksi) { cls = "streak-chip koreksi"; label = "✏️ Edit"; }
+        stripHtml += `<div class="${cls}" title="${htmlEntities(txt)}">${label}</div>`;
+    });
+    document.getElementById("streakStrip").innerHTML =
+        stripHtml || "<p style='font-size:12px;color:var(--soft);padding:10px;'>Belum ada riwayat kas tercatat.</p>";
+
+    // --- Kartu statistik ringkas ---
+    const totalKasTercatat = riwayat.filter((t) => t.includes("BORONGAN") || t.includes("Bayar")).length;
+    document.getElementById("kalStats").innerHTML = `
+        <div class="kal-stat-card">
+            <div class="kal-stat-num">${totalKasTercatat}</div>
+            <div class="kal-stat-label">Total Kas Tercatat</div>
+        </div>
+        <div class="kal-stat-card">
+            <div class="kal-stat-num">${kuotaKas}</div>
+            <div class="kal-stat-label">Minggu Prabayar</div>
+        </div>
+        <div class="kal-stat-card">
+            <div class="kal-stat-num" style="color:${isLunasSekarang ? '#4d7c0f' : '#ef4444'}">
+                ${isLunasSekarang ? "LUNAS" : "BELUM"}
+            </div>
+            <div class="kal-stat-label">Status Minggu Ini</div>
+        </div>
+    `;
+}
+
+// ==========================================================
+// PWA: REGISTRASI SERVICE WORKER
+// Wajib ada agar situs ini dianggap "installable" oleh
+// PWABuilder/Chrome saat dikonversi menjadi APK.
+// ==========================================================
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js")
+            .then(() => console.log("Service worker member portal aktif ✅"))
+            .catch((err) => console.warn("Gagal register service worker:", err));
+    });
 }

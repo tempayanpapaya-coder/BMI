@@ -1629,3 +1629,280 @@ color:#ffffff;
 text-shadow:
 0 0 20px rgba(255,215,120,.8);
 }
+/* ======================================================
+   UPGRADE TAMPILAN: RESPONSIVE ANDROID + LAPTOP
+   ====================================================== */
+
+/* --- 1. STICKY MINI HEADER (muncul saat scroll) --- */
+.mini-header{
+    position:fixed;
+    top:-100px;
+    left:0; right:0;
+    z-index:920;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 22px;
+    background: rgba(12,8,4,.92);
+    backdrop-filter: blur(16px);
+    border-bottom:1px solid var(--border);
+    transition: top .35s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,.4);
+}
+.mini-header.show{ top:0; }
+.mini-header img{
+    width:36px; height:36px;
+    border-radius:10px;
+    object-fit:contain;
+    background: rgba(255,255,255,.08);
+    padding:4px;
+    border:1px solid var(--border);
+}
+.mini-header .mh-info{ flex:1; min-width:0; }
+.mini-header .mh-name{
+    font-weight:800; font-size:13px; color:var(--primary2);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.mini-header .mh-sub{ font-size:10px; color:var(--soft); letter-spacing:.5px; }
+.mini-header .dot{ width:8px; height:8px; }
+
+/* --- 2. HEADER STATS JADI CAROUSEL DI HP --- */
+@media(max-width:768px){
+    .header-stats{
+        flex-wrap:nowrap;
+        overflow-x:auto;
+        scroll-snap-type:x mandatory;
+        -webkit-overflow-scrolling:touch;
+        padding-bottom:8px;
+        margin-right:-22px;
+        padding-right:22px;
+    }
+    .header-stats::-webkit-scrollbar{ height:4px; }
+    .header-stats::-webkit-scrollbar-thumb{ background:var(--primary); border-radius:20px; }
+    .stat-card{
+        scroll-snap-align:start;
+        flex:0 0 auto;
+        min-width:118px;
+    }
+}
+
+/* --- 3. SKELETON LOADING SAAT DATA MEMBER BELUM MASUK --- */
+.profile-box{ position:relative; }
+.skeleton-overlay{ display:none; }
+.profile-box.loading > *:not(.skeleton-overlay){ opacity:0; }
+.profile-box.loading .skeleton-overlay{
+    display:block;
+    position:absolute;
+    inset:0;
+    padding:34px;
+    border-radius:32px;
+    background: rgba(26,18,11,.96);
+    z-index:5;
+}
+.skeleton-line{
+    height:16px;
+    border-radius:8px;
+    margin-bottom:14px;
+    background: linear-gradient(90deg, rgba(255,255,255,.05) 25%, rgba(255,255,255,.14) 50%, rgba(255,255,255,.05) 75%);
+    background-size:200% 100%;
+    animation: skeletonShine 1.4s infinite;
+}
+@keyframes skeletonShine{
+    0%{ background-position:200% 0; }
+    100%{ background-position:-200% 0; }
+}
+
+/* ======================================================
+   BOTTOM NAVIGATION (KHUSUS ANDROID / LAYAR SEMPIT)
+   ====================================================== */
+.bottom-nav{ display:none; }
+
+@media(max-width:768px){
+    body{ padding-bottom:100px; }
+    .btn-game-float{ bottom:92px; } /* dinaikkan supaya tidak ketutup bottom nav */
+
+    .bottom-nav{
+        display:flex;
+        position:fixed;
+        left:0; right:0; bottom:0;
+        z-index:960;
+        justify-content:space-around;
+        background: linear-gradient(180deg, #2c1e11, #0c0804 65%);
+        border-top:2px solid var(--primary);
+        box-shadow: 0 -10px 25px rgba(0,0,0,.6);
+        padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px));
+    }
+    .bn-item{
+        background:none; border:none;
+        color:var(--soft);
+        display:flex; flex-direction:column;
+        align-items:center; justify-content:center;
+        gap:3px;
+        font-family:'Quicksand', sans-serif;
+        font-size:10px; font-weight:800; letter-spacing:.2px;
+        flex:1; padding:6px 2px;
+        cursor:pointer;
+        transition:.2s;
+        -webkit-tap-highlight-color:transparent;
+    }
+    .bn-item .bn-icon{ font-size:20px; line-height:1; }
+    .bn-item:active{ transform:scale(.92); color:var(--primary2); }
+}
+
+/* ======================================================
+   MODAL KALENDER KEHADIRAN
+   ====================================================== */
+.cal-month-label{
+    font-family:'Playfair Display', serif;
+    font-size:20px; font-weight:900;
+    color:var(--primary2);
+    text-align:center;
+    margin-bottom:16px;
+}
+.cal-grid{
+    display:grid;
+    grid-template-columns:repeat(7, 1fr);
+    gap:6px;
+    margin-bottom:6px;
+}
+.cal-daylabel{
+    text-align:center;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.5px;
+    color:var(--soft);
+    text-transform:uppercase;
+    padding-bottom:6px;
+}
+.cal-cell{
+    aspect-ratio:1;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:12px;
+    background: rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.05);
+    font-size:12px; font-weight:700;
+    color:var(--text);
+    position:relative;
+}
+.cal-cell.empty{ background:none; border:none; }
+.cal-cell.training::after{
+    content:"";
+    position:absolute;
+    bottom:5px;
+    width:5px; height:5px;
+    border-radius:50%;
+    background:var(--primary2);
+    box-shadow:0 0 6px rgba(212,163,89,.7);
+}
+.cal-cell.today{
+    border:2px solid #ffd36b;
+    box-shadow:0 0 14px rgba(255,215,120,.5);
+    font-weight:900;
+}
+.cal-cell.today.lunas{ background: linear-gradient(135deg,#3f6212,#4d7c0f); color:#fff; }
+.cal-cell.today.belum{ background: linear-gradient(135deg,#991b1b,#b91c1c); color:#fff; }
+
+.cal-legend{
+    display:flex; flex-wrap:wrap; gap:14px;
+    font-size:11px; color:var(--soft);
+    margin:14px 0 4px;
+}
+.cal-legend span{ display:inline-flex; align-items:center; gap:6px; }
+.cal-legend i{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+
+.streak-title{
+    font-family:'Playfair Display', serif;
+    font-size:16px; font-weight:900;
+    color:var(--primary2);
+    margin:22px 0 10px;
+}
+.streak-strip{
+    display:flex; gap:8px;
+    overflow-x:auto;
+    padding:4px 2px 14px;
+}
+.streak-chip{
+    flex:0 0 auto;
+    min-width:64px;
+    padding:12px 10px;
+    border-radius:14px;
+    text-align:center;
+    font-size:11px;
+    font-weight:800;
+    cursor:default;
+}
+.streak-chip.kas{ background: rgba(63,98,18,.22); border:1px solid #3f6212; color:#bef264; }
+.streak-chip.koreksi{ background: rgba(133,77,14,.22); border:1px solid #854d0e; color:#fde68a; }
+.streak-chip.info{ background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); color:var(--soft); }
+
+.kal-stats{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+    margin-top:18px;
+}
+.kal-stat-card{
+    padding:16px 8px;
+    border-radius:18px;
+    background: rgba(212,163,89,.05);
+    border:1px solid var(--border);
+    text-align:center;
+}
+.kal-stat-num{ font-size:20px; font-weight:900; color:var(--primary2); }
+.kal-stat-label{ font-size:10px; color:var(--soft); margin-top:6px; letter-spacing:.3px; }
+
+.kal-note{
+    font-size:11px;
+    color:var(--soft);
+    text-align:center;
+    margin-top:16px;
+    font-style:italic;
+    opacity:.8;
+}
+
+@media(max-width:768px){
+    .kal-stat-num{ font-size:16px; }
+    .cal-cell{ font-size:11px; border-radius:9px; }
+}
+
+/* ======================================================
+   PERBAIKAN: HEADER TERPOTONG DI ANDROID (brand-area overflow)
+   Logo & blok teks disamping sebelumnya berbagi baris (row) sehingga
+   di layar sempit, judul "BMI TAEKWONDO ACADEMY" dan header-stats
+   kepotong/overflow keluar topbar. Diperbaiki jadi susun vertikal.
+   ====================================================== */
+@media(max-width:768px){
+    .brand-area{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:16px;
+        width:100%;
+    }
+    .brand-area > div{
+        width:100%;
+        min-width:0;
+    }
+    .logo-wrap{
+        width:84px;
+        height:84px;
+    }
+    .gear-front{ width:88px; height:88px; }
+    .gear-back{ width:102px; height:102px; }
+    .logo{ width:64px; height:64px; }
+    .brand-title{
+        font-size: clamp(22px, 7vw, 28px);
+        overflow-wrap:break-word;
+        word-break:break-word;
+        white-space:normal;
+    }
+    .brand-badge{ font-size:10px; padding:6px 12px; }
+    .brand-sub{ font-size:12px; }
+}
+
+/* ======================================================
+   HAPUS TOMBOL "MAIN PUZZLE" MENGAMBANG DI HP
+   (sudah digantikan tombol 🎮 Game pada bottom navigation)
+   ====================================================== */
+@media(max-width:768px){
+    .btn-game-float{ display:none; }
+}
