@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=no">
+    <title>Taekwondo Memory Puzzle - Progressive Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="CSS/Shop.css">
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2c3e50">
+</head>
+<body>
+
+    
+        <div class="panel" style="border-color: #e67e22; max-width: 90%; width: 340px;">
+            <h3 style="color: #e67e22; margin-bottom: 5px;">🛒 TOKO TAEGEUK</h3>
+            <div style="color: #ffd700; font-weight: bold; margin-bottom: 15px;">💰 Dompet: Rp.<span id="shopCoins">0</span>K</div>
+            
+            <div class="shop-item-list" style="display: flex; flex-direction: column; gap: 10px; text-align: left; margin-bottom: 20px;">
+                <!-- Item 1: Clue/Hint -->
+                <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">🔍 Clue / Hint</div>
+                        <div style="font-size: 11px; color: #aaa;">Biaya: Rp.10K | Dimiliki: <span id="ownedHint">0</span></div>
+                    </div>
+                    <button onclick="buyItemShop('hint', 10)" style="background: #e67e22; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold;">BELI</button>
+                </div>
+
+                <!-- Item 2: No Limit Time -->
+                <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">♾️ No Limit Time</div>
+                        <div style="font-size: 11px; color: #aaa;">Biaya: Rp.35K | Dimiliki: <span id="ownedNoLimit">0</span></div>
+                    </div>
+                    <button onclick="buyItemShop('noLimit', 35)" style="background: #e67e22; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold;">BELI</button>
+                </div>
+
+                <!-- Item 3: Paid Shuffle -->
+                <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">🔀 Paid Shuffle</div>
+                        <div style="font-size: 11px; color: #aaa;">Biaya: Rp.10K | Dimiliki: <span id="ownedShuffle">0</span></div>
+                    </div>
+                    <button onclick="buyItemShop('shuffle', 10)" style="background: #e67e22; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold;">BELI</button>
+                </div>
+            </div>
+            
+            <button class="btn-close" onclick="goToHome()">
+    ❌ KELUAR TOKO
+</button>
+        </div>
+    
+<script src="JS/Shop.js"></script>
+</body>
+</html>

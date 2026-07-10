@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=no">
+    <title>Taekwondo Memory Puzzle - Progressive Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="CSS/TKD.css">
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2c3e50">
+  <link rel="stylesheet" href="layer-styles.css">
+</head>
+<body>
+<div id="comboDisplay" class="combo-text"></div>
+<audio id="bgMusic" loop>
+    <source src="https://github.com/tempayanpapaya-coder/Komponen/raw/refs/heads/main/path_of_the_open_palm.mp3" type="audio/mpeg">
+</audio>
+
+<div id="cheatPanel" class="cheat-panel hidden">
+    <h4 style="color:#ff3d00; text-align:center; margin:0 0 10px 0;">🛠️ DEV CHEAT ENGINE</h4>
+    <div class="cheat-group">
+        <label>Lompat ke Level:</label>
+        <input type="number" id="cheatLevelInput" min="1" max="100" placeholder="Contoh: 12">
+        <button class="cheat-btn" onclick="cheatSetLevel()">Pindah Level</button>
+    </div>
+    <div class="cheat-group">
+        <button class="cheat-btn green" onclick="cheatAddCoins()">+ Rp.999K Koin Gratis</button>
+        <button class="cheat-btn green" onclick="cheatAutoWin()">Instant Win (Auto-Solve)</button>
+        <button class="cheat-btn green" onclick="cheatTimeNoLimit()">♾️Time no limit</button>
+        <button class="cheat-btn green" onclick="cheatAddBossTokens()">+ 999 MASTER Token Gratis</button>
+    </div>
+    <button onclick="toggleCheatPanel()" style="width:100%; background:#333; color:white; border-radius:8px; padding:5px; border:none;">❌ Tutup</button>
+</div>
+
+<div class="slider-banner">
+    <div class="slide active">UKT: <span id="chapter">1</span></div>
+    <div class="slide">🆙 Level: <span id="level">1</span></div>
+    <div class="slide">🥋 Sabuk: <span id="beltRank">Putih</span></div>
+    <div class="slide">⭐ Skor: <span id="score">0</span></div>
+    
+</div>
+ <select id="difficultySelect" onchange="changeDifficulty(this.value)">
+    <option value="regular">🟨 Regular</option>
+    <option value="senior">🟥 Senior</option>
+    <option value="sabeum">⬛ Shabeum</option>
+</select>
+<div id="bossTokenWrapper" class="hidden-token" style="color:yellow; text-align:center; margin:0 0 10px 0;">👑 MASTER Token: <span id="bossTokens">0</span></div>
+
+<div id="game-wrapper">
+    <canvas id="lineCanvas"></canvas>
+    <div id="game"></div>
+
+    <div id="startOverlay" class="overlay">
+        <button id="startBtn" onclick="startLevel()">▶ START</button>
+    </div>
+
+    <div id="gameOverOverlay" class="overlay hidden">
+        <div>
+            <h2 style="color:red; margin-bottom:15px;">💀 GAME OVER</h2>
+            <button onclick="resetCurrentLevel()" style="background:linear-gradient(145deg, #059669, #047857);">🔄 COBA LAGI</button>
+        </div>
+    </div>
+</div>
+
+<div class="info">⏱️ Waktu: <span id="time">220</span></div>
+
+<div class="control-area">
+    <div>
+        <select id="levelSelector" class="level-select" onchange="selectLevel(this.value)" disabled>
+            <option value="">📁 Pilih Level Terbuka (Kunci)</option>
+        </select>
+    </div>
+
+     <!-- KANTONG ITEM DI DALAM ARENA GAME -->
+    <div id="shop-panel">
+<div class="settings-btn" id="settingsBtn">⚙️</div>
+
+        <div id="settingsPanel" class="settings-panel hidden">
+            <h4>⚙️ PENGATURAN GAME</h4>
+            <div class="settings-group">
+                <div class="settings-item-row">
+                    <span>🎵 Musik Latar</span>
+                    <button id="musicToggleBtn" onclick="toggleMusic()" style="background:#21bb1a; padding: 4px 8px; font-size:11px; border-radius:6px; border:none; color:white; font-weight:bold; cursor:pointer;">MUTE</button>
+                </div>
+                <div class="settings-slider-container">
+                    <input type="range" id="musicVolumeSlider" min="0" max="1" step="0.1" value="1" oninput="updateMusicVolume(this.value)">
+                </div>
+
+                <div class="settings-item-row" style="margin-top: 5px;">
+                    <span>🔊 Efek Suara</span>
+                    <span id="soundVolPercent" style="font-size:12px; color:#00b0ff; font-weight:bold;">100%</span>
+                </div>
+                <input type="range" min="0" max="1" step="0.1" value="1" oninput="updateSoundVolume(this.value)">
+            </div>
+
+            <div class="settings-item">
+                <span>Mode Layar</span>
+                <span style="color:#00b0ff;">Responsif HP</span>
+            </div>
+        
+            <button onclick="document.getElementById('settingsPanel').classList.add('hidden')" style="width:100%; background:#333; color:white; border-radius:8px; padding:8px; border:none; margin-bottom:10px; font-weight:bold; cursor:pointer;">❌ Tutup Menu</button>
+
+            <button class="btn-reset-data" onclick="resetAllGameData()">⚠️ RESET SEMUA DATA GAME</button>
+        </div>
+        <h3>🎒 KANTONG ITEM</h3>
+        
+        <h3 class="coin-badge">💰 Koin: Rp.<span id="coins">0</span>K </h3>
+         
+        <h4 style="color: rgba(255,255,255,0.6); text-align:center; margin:0 0 10px 0;">gunakan item yang sudah dibeli di toko</h4>
+        <div class="shop-buttons">
+            <!-- Menggunakan Clue -->
+            <button id="btnHint" class="btn-shop">
+                🔍 Gunakan Clue
+                <span style="color: #00b0ff;">Sisa: <b id="invHint">0</b></span>
+            </button>
+            
+            <!-- Menggunakan No Limit Time -->
+            <button id="btnNoLimit" class="btn-shop" onclick="useNoLimitItem()">
+                ♾️ Aktifkan No Limit
+                <span style="color: #00b0ff;">Sisa: <b id="invNoLimit">0</b></span>
+            </button>
+            
+            <!-- Menggunakan Paid Shuffle -->
+            <button id="btnPaidShuffle" class="btn-shop" onclick="useShuffleItem()">
+                🔀 Pakai Shuffle
+                <span style="color: #00b0ff;">Sisa: <b id="invShuffle">0</b></span>
+            </button>
+            
+            <!-- Tombol Lompat Level tetap dipertahankan atau bisa disesuaikan -->
+            <button id="btnSkipLevel" class="btn-shop">
+                🛠️ Lompat Level
+                <span>Biaya: Rp.15K</span>
+            </button>
+        </div>
+    </div>
+
+
+    <div id="leaderboard-panel">
+        <h3>🏆 Papan Peringkat Master</h3>
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>Pos</th>
+                    <th>Nama</th>
+                    <th>Skor</th>
+                    <th>Level</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body"></tbody>
+        </table>
+    </div>
+</div>
+<div>
+  <button id="btnMulih" class="btn-shop">🏠 home
+  </button>
+</div>
+<div id="countdown"></div>
+
+
+
+<script src="JS/Sound.js"></script>
+<script src="JS/Storage.js"></script>
+<script src="JS/Game.js"></script>
+
+</body>
+</html>

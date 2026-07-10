@@ -2,307 +2,101 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Portal - BMI Taekwondo Academy</title>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-     <link rel="stylesheet" href="CSS/index.css">
-
-    <!-- ====== PWA: BAHAN DASAR UNTUK DIJADIKAN APK ====== -->
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#0c0804">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="BMI Member">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2016.20.14..png">
-    <link rel="icon" href="https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2016.20.14..png">
-
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Taekwondo Memory Puzzle - Progressive Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="CSS/index.css">
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2c3e50">
+  
 </head>
 <body>
+
+  <marquee class="running-text">
+     Game Gratis gini kok gak di pake 
+</marquee>
+
+<div class="top-menu">
+    <div class="settings-btn" onclick="toggleSettingsPanel()">
+        ⚙️
+    </div>
+</div>
   
-  <audio id="coachAudio" src="https://github.com/tempayanpapaya-coder/Komponen/raw/refs/heads/main/sang_penakluk.mp3" loop></audio>
+    
+    <div class="menu-container">
+        <div class="game-title">TAEKWONDO</div>
+        <img src="Asset/dragon.png" alt="Logo Game Taekwondo" width="150">
+        <div class="game-title" style="background: linear-gradient(to bottom, #ff7675, #d63031); -webkit-background-clip: text;">MEMORY PUZZLE</div>
+        <div class="game-subtitle">Progressive Edition</div>
 
-<!-- ====== STICKY MINI HEADER (muncul saat scroll ke bawah) ====== -->
-<div class="mini-header" id="miniHeader">
-    <img src="https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2016.20.14..png" alt="logo">
-    <div class="mh-info">
-        <div class="mh-name" id="miniName">BMI Taekwondo Academy</div>
-        <div class="mh-sub">Member Portal</div>
-    </div>
-    <div class="dot"></div>
+        <div class="user-badge">
+          
+          <div style="width: 92%; max-width: 500px; margin: 10px auto 0px; text-align: left;">
+    <label for="difficultySelect" style="font-size: 12px; font-weight: bold; color: #ffd700;">🥋 Pilih Tingkatan Ujian:</label>
+    <select id="difficultySelect" onchange="selectDifficultyMenu(this.value)" style="width: 100%; background: linear-gradient(145deg, #2c3e50, #1a252f); border: 1px solid #00b0ff; padding: 6px; border-radius: 8px; color: white; font-size: 13px; margin-top: 4px;">
+        <option value="regular">🟨 Regular</option>
+        <option value="senior">🟥 Senior</option>
+        <option value="sabeum">⬛ Shabeum</option>
+    </select>
 </div>
 
-<div class="topbar">
-
-    <div class="topbar-overlay"></div>
-
-    <div class="brand-area">
-       <div class="logo-wrap">
-
-    <div class="gear gear-back"></div>
-
-    <div class="gear gear-front"></div>
-
-    <div class="gear-center"></div>
-
-    <img src="https://raw.githubusercontent.com/tempayanpapaya-coder/BMI/refs/heads/main/ChatGPT%20Image%2012%20Mei%202026%2C%2016.20.14..png" class="logo">
-
-</div>
-
-        <div>
-            <div class="brand-badge">OFFICIAL MEMBER PORTAL</div>
-
-            <div class="brand-title">
-                BMI TAEKWONDO
-                <span>ACADEMY</span>
-            </div>
-
-            <div class="brand-sub">
-                Discipline • Honor • Excellence
-            </div>
-
-            <div class="header-stats">
-                <div class="stat-card">
-                    <div class="stat-number">MFT</div>
-                    <div class="stat-label">Level akan hadir...</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-number">SPEED</div>
-                    <div class="stat-label">Level akan hadir...</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-number">POWER</div>
-                    <div class="stat-label">Level akan hadir...</div>
-                </div>
-                 <div class="stat-card">
-                    <div class="stat-number">SMART</div>
-                    <div class="stat-label">Level akan hadir...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <div class="header-right">
-        <div class="live-box">
-            <div class="dot"></div>
-            SYSTEM ONLINE
+<div id="info">
+    ...
+            <div>🥋 Petarung: <span id="lblPlayerName">Ksatria_WT</span></div>
+            <div style="font-size: 12px; opacity: 0.8;">🏆 Max Level Terbuka: <span id="lblMaxLevel" style="color: #ffd700;">1</span></div>
         </div>
 
-       <button class="hero-btn" onclick="toggleCoachMessage(true)">
-    MEMBER AREA
+        <div class="menu-buttons">
+            <button id="btnStart" class="btn-main" onclick="goToGame()">▶ START GAME</button>
+            <button id="btnShop" onclick="goToShop()">
+    🛒 TOKO TAEGEUK
 </button>
-    </div>
-
-</div>
-  <button class="btn-game-float" onclick="toggleGame(true)">
-    🎮 Main Puzzle
-</button>
-
-<div id="modalGame" class="modal-game">
-    <div class="modal-game-content">
-        <div class="close-game" onclick="toggleGame(false)">&times;</div>
-        <iframe src="https://tempayanpapaya-coder.github.io/BMI/Puzle.html" class="game-frame"></iframe>
-    </div>
-</div>
-
-<div class="container">
-    <div id="loginSection" class="login-box">
-        <h1>Member Login</h1>
-        <p class="subtitle">BMI Taekwondo Academy</p>
-        <input type="text" id="userInp" placeholder="Username">
-        <input type="password" id="passInp" placeholder="Password">
-
-        <div class="forgot-box">
-            <a href="https://wa.me/6285741163911?text=Shabeum,%20saya%20lupa%20username%20dan%20Password%20untuk%20aplikasi%20BMI%20,%20mohon%20untuk%20di%20kirim%20ke%20saya%20lagi%20agar%20saya%20bisa%20masuk%20ke%20aplikasi%20BMI%20kembali%20🙏" target="_blank" class="forgot-link">Lupa Username & Password?</a>
+            <button id="btnAccount" class="btn-main" onclick="togglePanel('accountPanel')">👤 BUAT / GANTI AKUN</button>
         </div>
+    </div>
 
-        <button class="btn btn-login" onclick="login()">Masuk ke Dashboard</button>
+    <div id="accountPanel" class="overlay">
+        <div class="panel">
+            <h3>👤 AKUN OFFLINE</h3>
+            <p style="font-size: 12px; color: #aaa; margin: 0;">Nama ini akan otomatis tercatat pada Papan Peringkat Master.</p>
+            <input type="text" id="txtPlayerName" maxlength="15" placeholder="Masukkan nama...">
+            <button class="btn-action" onclick="saveOfflineAccount()">SIMPAN AKUN</button>
+            <button class="btn-close" onclick="togglePanel('accountPanel')">Batal</button>
+        </div>
+    </div>
+
+ <div id="settingsOverlay" class="settings-overlay hidden"></div>
+        <div id="settingsPanel" class="settings-panel hidden">
+            <h4>⚙️ PENGATURAN GAME</h4>
+            <div class="settings-group">
+                <div class="settings-item-row">
+                    <span>🎵 Musik Latar</span>
+                    <button id="musicToggleBtn" onclick="toggleMusic()" style="background:#21bb1a; padding: 4px 8px; font-size:11px; border-radius:6px; border:none; color:white; font-weight:bold; cursor:pointer;">MUTE</button>
+                </div>
+                <div class="settings-slider-container">
+                    <input type="range" id="musicVolumeSlider" min="0" max="1" step="0.1" value="1" oninput="updateMusicVolume(this.value)">
+                </div>
+
+                <div class="settings-item-row" style="margin-top: 5px;">
+                    <span>🔊 Efek Suara</span>
+                    <span id="soundVolPercent" style="font-size:12px; color:#00b0ff; font-weight:bold;">100%</span>
+                </div>
+                <input type="range" id="soundVolumeSlider" min="0" max="1" step="0.1" value="1" oninput="updateSoundVolume(this.value)">
+            </div>
+
+            <div class="settings-item">
+                <span>Mode Layar</span>
+                <span style="color:#00b0ff;">Responsif HP</span>
+            </div>
         
-        <button class="btn-register-trigger" onclick="toggleRegister(true)">📝 Pendaftaran Member Baru</button>
-    </div>
-
-    <div id="modalRegister" class="modal-register">
-        <div class="modal-register-content">
-            <span class="close-register" onclick="toggleRegister(false)">&times;</span>
-            <h2>Formulir Pendaftaran</h2>
-            <p class="subtitle" style="margin-bottom: 20px;">Silakan lengkapi data calon member baru</p>
-            
-            <label class="reg-label">Nama Lengkap</label>
-            <input type="text" id="regNama" placeholder="Contoh: Raden Wijaya">
-            
-            <label class="reg-label">Berat Badan (kg)</label>
-            <input type="number" id="regBerat" placeholder="Contoh: 55">
-            
-            <label class="reg-label">Tinggi Badan (cm)</label>
-            <input type="number" id="regTinggi" placeholder="Contoh: 165">
-            
-            <label class="reg-label">Tanggal Lahir</label>
-            <input type="date" id="regTglLahir">
-            
-            <label class="reg-label">Warna Sabuk Awal</label>
-            <select id="regSabuk">
-                <option value="Putih">Putih</option>
-                <option value="Kuning">Kuning</option>
-                <option value="Hijau">Hijau</option>
-                <option value="Biru">Biru</option>
-                <option value="Merah">Merah</option>
-                <option value="Hitam">Hitam</option>
-            </select>
-
-            <button class="btn btn-register-submit" style="margin-top: 10px;" onclick="kirimPendaftaranWA()">Kirim & Daftarkan Anggota via WA</button>
+           
+           
+            <button class="btn-reset-data" onclick="resetAllGameData()">⚠️ RESET SEMUA DATA GAME</button>
         </div>
-    </div>
+      
+    <footer>© 2026 Taekwondo Memory Puzzle. All Rights Reserved.</footer>
 
-    <div id="profileSection" class="profile-box loading">
-        <div class="skeleton-overlay">
-            <div class="skeleton-line" style="width:55%; height:32px;"></div>
-            <div class="skeleton-line" style="width:35%; height:16px; margin-bottom:26px;"></div>
-            <div class="skeleton-line" style="width:100%; height:130px; border-radius:24px;"></div>
-            <div class="skeleton-line" style="width:100%; height:90px; border-radius:20px; margin-top:16px;"></div>
-            <div class="skeleton-line" style="width:100%; height:90px; border-radius:20px;"></div>
-        </div>
-        <h1 id="welcomeName" style="color: #fff;">Halo!</h1>
-        <p class="subtitle" id="memberUser" style="color:#e9c48f; font-weight:700;"></p>
-
-        <div id="alertBox" style="display:none;" class="notif-alert">
-            ⚠️ Perhatian: Anda memiliki tunggakan kewajiban!
-        </div>
-
-        <a href="https://raw.githubusercontent.com/tempayanpapaya-coder/Komponen/refs/heads/main/Brosur%20baru.png" class="btn-download-brosur">Download Brosur dan bagikan ke Sosial Media</a>
-
-        <div class="info-card">
-            <div class="info-row"><span class="label">Status kewajiban</span><span id="statusTag"></span></div>
-            <div class="info-row">
-                <span class="label">Jenis Pembayaran</span>
-                <span class="val" style="color:var(--primary2)">Kas Mingguan • Rp5.000</span>
-            </div>
-            <div class="info-row"><span class="label">Warna Sabuk</span><span class="val" id="valSabuk">-</span></div>
-            <div class="info-row"><span class="label">Tgl Lahir</span><span class="val" id="valTgl">-</span></div>
-            <div class="info-row"><span class="label">WhatsApp</span><span class="val" id="valWA">-</span></div>
-            <div class="info-row"><span class="label">Fisik (Berat/Tinggi)</span><span class="val" id="valFisik">-</span></div>
-            <div class="info">
-                <div class="schedule-box">
-                    <div class="schedule-title">📅 Jadwal Latihan</div>
-                    <button class="btn-show-jadwal" onclick="toggleJadwal(true)">
-                        <span>JADWAL LATIHAN</span>
-                    </button>
-                    <button class="btn-show-jadwal" style="margin-top:12px; background:linear-gradient(135deg,#4d3a1f,#2c1e11); color:var(--primary2);" onclick="toggleKalender(true)">
-                        <span>📊 KALENDER KEHADIRAN</span>
-                    </button>
-                    <div class="izin-box">
-                        <div class="izin-text">Jika hari ini mau ijin tidak berangkat latihan</div>
-                        <a href="https://wa.me/+62882003007515?text=Shabum%20Widya%20yang%20Cantik,%20Maaf%20hari%20ini%20anak%20saya%20ijin%20tidak%20bisa%20Hadir%20mengikuti%20latihan,%20harap%20di%20maklumi%20ya%20Shabeum" target="_blank" class="btn-izin">KLIK IJIN</a>
-                    </div>
-                    <div id="modalJadwal" class="modal-jadwal">
-                        <div class="modal-jadwal-content">
-                            <span class="close-jadwal" onclick="toggleJadwal(false)">&times;</span>
-                            <h2 style="margin-bottom: 25px; color: #e9c48f; font-weight: 900;">Master Schedule</h2>
-                            <div id="jadwal"></div>
-                        </div>
-                    </div>
-
-                    <!-- ====== MODAL KALENDER KEHADIRAN ====== -->
-                    <div id="modalKalender" class="modal-jadwal">
-                        <div class="modal-jadwal-content">
-                            <span class="close-jadwal" onclick="toggleKalender(false)">&times;</span>
-                            <h2 style="margin-bottom: 6px; color: #e9c48f; font-weight: 900;">📊 Kalender Kehadiran</h2>
-                            <p class="subtitle" style="margin-bottom:18px;">Hari latihan terjadwal & status kas mingguan</p>
-
-                            <div class="cal-month-label" id="calMonthLabel">-</div>
-                            <div class="cal-grid" id="calGrid"></div>
-
-                            <div class="cal-legend">
-                                <span><i style="background:var(--primary2);"></i> Hari Latihan Terjadwal</span>
-                                <span><i style="background:#4d7c0f;"></i> Minggu Ini Lunas</span>
-                                <span><i style="background:#b91c1c;"></i> Minggu Ini Belum Bayar</span>
-                            </div>
-
-                            <div class="streak-title">🧾 Riwayat Kas Terakhir</div>
-                            <div class="streak-strip" id="streakStrip"></div>
-
-                            <div class="kal-stats" id="kalStats"></div>
-
-                            <p class="kal-note">*Kalender ini menggabungkan jadwal latihan terjadwal dengan status kewajiban kas mingguan sebagai indikator kehadiran & keaktifan.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="payment-box">
-            <div class="payment-title">📌 KAS di bayar pada </div>
-            <div id="paymentStatus"></div>
-            
-            <div class="history-title">📜 Catatan & Riwayat Kas</div>
-            <div id="historyContainer"></div>
-        </div>
-
-        <button class="btn" style="background:#4a3728; color:#f5f2eb; margin-top:20px; border:1px solid var(--border);" onclick="logout()">Keluar</button>
-    </div>
-</div>
-
-<div class="footer-pro">
-    <div class="footer-title">BMI TAEKWONDO ACADEMY</div>
-    <div class="footer-sub">Vini • Vidi • Vici</div>
-    <div class="footer-copy">© 2026 All Rights Reserved</div>
-</div>
-
-<!-- ====== BOTTOM NAVIGATION (MUNCUL OTOMATIS DI LAYAR HP) ====== -->
-<div class="bottom-nav" id="bottomNav">
-    <button class="bn-item" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <span class="bn-icon">🏠</span><span>Beranda</span>
-    </button>
-    <button class="bn-item" onclick="toggleJadwal(true)">
-        <span class="bn-icon">📅</span><span>Jadwal</span>
-    </button>
-    <button class="bn-item" onclick="toggleKalender(true)">
-        <span class="bn-icon">📊</span><span>Kalender</span>
-    </button>
-    <button class="bn-item" onclick="toggleGame(true)">
-        <span class="bn-icon">🎮</span><span>Game</span>
-    </button>
-</div>
-
-<!-- ========================= -->
-<!-- COACH MESSAGE MODAL -->
-<!-- ========================= -->
-
-<div id="coachModal" class="coach-modal">
-
-    <div class="coach-canvas">
-
-        <div class="coach-glow"></div>
-
-        <span class="coach-close" onclick="toggleCoachMessage(false)">
-            &times;
-        </span>
-
-        <div class="coach-title">
-            PESAN DARI PELATIH
-        </div>
-
-        <div class="coach-line"></div>
-
-        <div class="coach-message">
-            Akan segera hadir...
-            <br><br>
-            nantinya pesan ini berisi tentang catatan kemampuan atlit sebagai evaluasi.
-        </div>
-    </div>
-</div>
-
-
-<script src="JS/index.js"></script>
+    <script src="JS/index.js"></script>
+    <script src="JS/Storage.js"></script>
 </body>
 </html>
