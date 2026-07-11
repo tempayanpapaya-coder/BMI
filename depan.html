@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Taekwondo Memory Puzzle - Progressive Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="CSS/index.css">
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2c3e50">
+  
+</head>
+<body>
+
+  <marquee class="running-text">
+     Game Gratis gini kok gak di pake 
+</marquee>
+
+<div class="top-menu">
+    <div class="settings-btn" onclick="toggleSettingsPanel()">
+        ⚙️
+    </div>
+</div>
+  
+    
+    <div class="menu-container">
+        <div class="game-title">TAEKWONDO</div>
+        <img src="Asset/dragon.png" alt="Logo Game Taekwondo" width="150">
+        <div class="game-title" style="background: linear-gradient(to bottom, #ff7675, #d63031); -webkit-background-clip: text;">MEMORY PUZZLE</div>
+        <div class="game-subtitle">Progressive Edition</div>
+
+        <div class="user-badge">
+          
+          <div style="width: 92%; max-width: 500px; margin: 10px auto 0px; text-align: left;">
+    <label for="difficultySelect" style="font-size: 12px; font-weight: bold; color: #ffd700;">🥋 Pilih Tingkatan Ujian:</label>
+    <select id="difficultySelect" onchange="selectDifficultyMenu(this.value)" style="width: 100%; background: linear-gradient(145deg, #2c3e50, #1a252f); border: 1px solid #00b0ff; padding: 6px; border-radius: 8px; color: white; font-size: 13px; margin-top: 4px;">
+        <option value="regular">🟨 Regular</option>
+        <option value="senior">🟥 Senior</option>
+        <option value="sabeum">⬛ Shabeum</option>
+    </select>
+</div>
+
+<div id="info">
+    ...
+            <div>🥋 Petarung: <span id="lblPlayerName">Ksatria_WT</span></div>
+            <div style="font-size: 12px; opacity: 0.8;">🏆 Max Level Terbuka: <span id="lblMaxLevel" style="color: #ffd700;">1</span></div>
+        </div>
+
+        <div class="menu-buttons">
+            <button id="btnStart" class="btn-main" onclick="goToGame()">▶ START GAME</button>
+            <button id="btnShop" onclick="goToShop()">
+    🛒 TOKO TAEGEUK
+</button>
+            <button id="btnAccount" class="btn-main" onclick="togglePanel('accountPanel')">👤 BUAT / GANTI AKUN</button>
+        </div>
+    </div>
+
+    <div id="accountPanel" class="overlay">
+        <div class="panel">
+            <h3>👤 AKUN OFFLINE</h3>
+            <p style="font-size: 12px; color: #aaa; margin: 0;">Nama ini akan otomatis tercatat pada Papan Peringkat Master.</p>
+            <input type="text" id="txtPlayerName" maxlength="15" placeholder="Masukkan nama...">
+            <button class="btn-action" onclick="saveOfflineAccount()">SIMPAN AKUN</button>
+            <button class="btn-close" onclick="togglePanel('accountPanel')">Batal</button>
+        </div>
+    </div>
+
+ <div id="settingsOverlay" class="settings-overlay hidden"></div>
+        <div id="settingsPanel" class="settings-panel hidden">
+            <h4>⚙️ PENGATURAN GAME</h4>
+            <div class="settings-group">
+                <div class="settings-item-row">
+                    <span>🎵 Musik Latar</span>
+                    <button id="musicToggleBtn" onclick="toggleMusic()" style="background:#21bb1a; padding: 4px 8px; font-size:11px; border-radius:6px; border:none; color:white; font-weight:bold; cursor:pointer;">MUTE</button>
+                </div>
+                <div class="settings-slider-container">
+                    <input type="range" id="musicVolumeSlider" min="0" max="1" step="0.1" value="1" oninput="updateMusicVolume(this.value)">
+                </div>
+
+                <div class="settings-item-row" style="margin-top: 5px;">
+                    <span>🔊 Efek Suara</span>
+                    <span id="soundVolPercent" style="font-size:12px; color:#00b0ff; font-weight:bold;">100%</span>
+                </div>
+                <input type="range" id="soundVolumeSlider" min="0" max="1" step="0.1" value="1" oninput="updateSoundVolume(this.value)">
+            </div>
+
+            <div class="settings-item">
+                <span>Mode Layar</span>
+                <span style="color:#00b0ff;">Responsif HP</span>
+            </div>
+        
+           
+           
+            <button class="btn-reset-data" onclick="resetAllGameData()">⚠️ RESET SEMUA DATA GAME</button>
+        </div>
+      
+    <footer>© 2026 Taekwondo Memory Puzzle. All Rights Reserved.</footer>
+
+    <script src="JS/index.js"></script>
+    <script src="JS/Storage.js"></script>
+</body>
+</html>
